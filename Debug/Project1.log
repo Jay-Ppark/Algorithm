@@ -1,0 +1,2 @@
+﻿  14502_연구소.cpp
+D:\works\Project1\14502_연구소.cpp(1,9): fatal error C1083: 포함 파일을 열 수 없습니다. 'bits/stdc++.h': No such file or directory
