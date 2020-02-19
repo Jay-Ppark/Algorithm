@@ -1,130 +1,126 @@
 #include<iostream>
+#include<vector>
 using namespace std;
-int height;
-int width;
+vector <int> virusX;
+vector <int> virusY;
 int lab[8][8];
 int templab[8][8];
-int tempcopylab[8][8];
+int tempvirus[8][8];
+int height;
+int width;
 int result;
-void copyLab()
-{
-	for (int i = 0; i < height; i++)
-	{
-		for (int j = 0; j < width; j++)
-		{
-			templab[i][j] = lab[i][j];
-		}
-	}
-}
-void resettemplab()
-{
-	for (int i = 0; i < height; i++)
-	{
-		for (int j = 0; j < width; j++)
-		{
-			tempcopylab[i][j] = templab[i][j];
-		}
-	}
-}
 void spreadVirus()
 {
-	resettemplab();
+	vector<int> tempvirusX;
+	vector<int> tempvirusY;
+	tempvirusX.resize(virusX.size());
+	tempvirusY.resize(virusY.size());
+	copy(virusX.begin(), virusX.end(), tempvirusX.begin());
+	copy(virusY.begin(), virusY.end(), tempvirusY.begin());
+	int temp = 0;
 	for (int i = 0; i < height; i++)
 	{
 		for (int j = 0; j < width; j++)
 		{
-			if (tempcopylab[i][j] == 2)
+			tempvirus[i][j] = templab[i][j];
+		}
+	}
+	while (!tempvirusX.empty())
+	{
+		int tempX = tempvirusX.back();
+		tempvirusX.pop_back();
+		int tempY = tempvirusY.back();
+		tempvirusY.pop_back();
+		if (tempY - 1 >= 0)
+		{
+			if (tempvirus[tempY - 1][tempX] == 0)
 			{
-				if (j - 1 >= 0 && tempcopylab[i][j - 1] == 0)
-				{
-					tempcopylab[i][j - 1] = 2;
-				}
-				if (j + 1 <= width && tempcopylab[i][j + 1] == 0)
-				{
-					tempcopylab[i][j + 1] = 2;
-				}
-				if (i - 1 >= 0 && tempcopylab[i - 1][j] == 0)
-				{
-					tempcopylab[i - 1][j] = 2;
-				}
-				if (i + 1 <= height && tempcopylab[i + 1][j] == 0)
-				{
-					tempcopylab[i + 1][j] = 2;
-				}
+				tempvirus[tempY - 1][tempX] = 2;
+				tempvirusX.push_back(tempX);
+				tempvirusY.push_back(tempY - 1);
+			}
+		}
+		if (tempY + 1 < height)
+		{
+			if (tempvirus[tempY + 1][tempX] == 0)
+			{
+				tempvirus[tempY + 1][tempX] = 2;
+				tempvirusX.push_back(tempX);
+				tempvirusY.push_back(tempY + 1);
+			}
+		}
+		if (tempX - 1 >= 0)
+		{
+			if (tempvirus[tempY][tempX - 1] == 0)
+			{
+				tempvirus[tempY][tempX - 1] = 2;
+				tempvirusX.push_back(tempX - 1);
+				tempvirusY.push_back(tempY);
+			}
+		}
+		if (tempX + 1 < width)
+		{
+			if (tempvirus[tempY][tempX + 1] == 0)
+			{
+				tempvirus[tempY][tempX + 1] = 2;
+				tempvirusX.push_back(tempX + 1);
+				tempvirusY.push_back(tempY);
 			}
 		}
 	}
-	int tempsum = 0;
 	for (int i = 0; i < height; i++)
 	{
 		for (int j = 0; j < width; j++)
 		{
-			if (tempcopylab[i][j] == 0)
+			if (tempvirus[i][j] == 0)
 			{
-				tempsum++;
+				temp++;
 			}
 		}
 	}
-	if (result < tempsum)
+	if (temp > result)
 	{
-		result = tempsum;
+		result = temp;
 	}
 }
-void makeWall(int cnt)
+void findSafe(int cnt)
 {
 	if (cnt == 3)
 	{
-		cout << "----------------½ÃÀÛ------------------" << endl;
-		for (int m = 0; m < height; m++) {
-			for (int n = 0; n < width; n++)
-			{
-				cout << templab[m][n];
-			}
-			cout << endl;
-		}
-		cout << "------------------³¡-------------------" << endl;
 		spreadVirus();
+		return;
 	}
-	else
+	for (int i = 0; i < height; i++)
 	{
-		for (int i = 0; i < height; i++)
+		for (int j = 0; j < width; j++)
 		{
-			for (int j = 0; j < width; j++)
+			if (templab[i][j] == 0)
 			{
-				if (templab[i][j] == 0)
-				{
-					templab[i][j] = 1;
-					cnt++;
-					makeWall(cnt);
-					templab[i][j] = 0;
-				}
+				templab[i][j] = 1;
+				findSafe(cnt + 1);
+				templab[i][j] = 0;
 			}
 		}
 	}
 }
 int main(void)
 {
+	vector<int> tempV;
 	cin >> height >> width;
 	for (int i = 0; i < height; i++)
 	{
 		for (int j = 0; j < width; j++)
 		{
 			cin >> lab[i][j];
-		}
-	}
-	for (int i = 0; i < height; i++)
-	{
-		for (int j = 0; j < width; j++)
-		{
-			if (lab[i][j] == 0)
+			templab[i][j] = lab[i][j];
+			if (lab[i][j] == 2)
 			{
-				copyLab();
-				templab[i][j] = 1;
-				makeWall(1);
-				templab[i][j] = 0;
+				virusX.push_back(j);
+				virusY.push_back(i);
 			}
 		}
 	}
+	findSafe(0);
 	cout << result;
 	return 0;
 }
