@@ -1,26 +1,40 @@
 #include<iostream>
 using namespace std;
-bool visitedQueen[14][14];
+int line[14];
 int result;
 int queen;
 int N;
-void findAnswer(int queenNum, int x, int y)
+bool checkQueen(int y)
 {
-	if (queenNum == N)
+	for (int i = 0; i < y; i++)
 	{
-
+		if (line[y] == line[i] || y - i == abs(line[y] - line[i]))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+void findAnswer(int y)
+{
+	if (y == N)
+	{
+		result++;
+		return;
 	}
 	for (int i = 0; i < N; i++)
 	{
-		for (int j = 0; j < N; j++)
+		line[y] = i;
+		if (checkQueen(y))
 		{
-
+			findAnswer(y + 1);
 		}
 	}
 }
 int main(void)
 {
 	cin >> N;
-
+	findAnswer(0);
+	cout << result;
 	return 0;
 }

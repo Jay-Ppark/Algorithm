@@ -2,15 +2,12 @@
 #include<vector>
 using namespace std;
 vector<int> v;
+소수의 제곱부터 
 int main(void)
 {
 	long long int max;
 	long long int min;
 	cin >> min >> max;
-	for (int i = 1; i * i <= 1000000; i++)
-	{
-		v.push_back(i * i);
-	}
-	
+	long long int cnt = max - min + 1;
 	return 0;
 }
