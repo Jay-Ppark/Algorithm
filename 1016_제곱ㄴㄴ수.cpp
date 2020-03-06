@@ -1,13 +1,33 @@
 #include<iostream>
-#include<vector>
+#include<cmath>
 using namespace std;
-vector<int> v;
-소수의 제곱부터 
+bool result[1000001];
 int main(void)
 {
-	long long int max;
-	long long int min;
-	cin >> min >> max;
-	long long int cnt = max - min + 1;
+	long long minnum;
+	long long maxnum;
+	cin >> minnum >> maxnum;
+
+	for (long long i = 2; i * i <= maxnum; i++)
+	{
+		long long startnum = minnum / (i * i);
+		if (startnum * i * i != minnum)
+		{
+			startnum++;
+		}
+		for (long long j = startnum; i * i * j <= maxnum; j++)
+		{
+			result[i * i * j - minnum] = true;
+		}
+	}
+	int count = 0;
+	for (int i = 0; i < maxnum - minnum + 1; i++)
+	{
+		if (!result[i])
+		{
+			count++;
+		}
+	}
+	cout << count << endl;
 	return 0;
 }

@@ -1,8 +1,8 @@
 #include<iostream>
 #include<algorithm>
 using namespace std;
-int arr[1001];
-int dp[1001];
+int arr[1000001];
+int dp[1000001];
 int main(void)
 {
 	int N;
