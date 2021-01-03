@@ -1,126 +1,74 @@
 #include<iostream>
+#include<queue>
 #include<vector>
+#include<algorithm>
 using namespace std;
-vector <int> virusX;
-vector <int> virusY;
+int N, M;
 int lab[8][8];
 int templab[8][8];
 int tempvirus[8][8];
-int height;
-int width;
-int result;
-void spreadVirus()
-{
-	vector<int> tempvirusX;
-	vector<int> tempvirusY;
-	tempvirusX.resize(virusX.size());
-	tempvirusY.resize(virusY.size());
-	copy(virusX.begin(), virusX.end(), tempvirusX.begin());
-	copy(virusY.begin(), virusY.end(), tempvirusY.begin());
-	int temp = 0;
-	for (int i = 0; i < height; i++)
-	{
-		for (int j = 0; j < width; j++)
-		{
+int dy[4] = { -1,1,0,0 };
+int dx[4] = { 0,0,-1,1 };
+int maxresult = 0;
+void spreadVirus() {
+	queue<pair<int, int>> q;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
 			tempvirus[i][j] = templab[i][j];
-		}
-	}
-	while (!tempvirusX.empty())
-	{
-		int tempX = tempvirusX.back();
-		tempvirusX.pop_back();
-		int tempY = tempvirusY.back();
-		tempvirusY.pop_back();
-		if (tempY - 1 >= 0)
-		{
-			if (tempvirus[tempY - 1][tempX] == 0)
-			{
-				tempvirus[tempY - 1][tempX] = 2;
-				tempvirusX.push_back(tempX);
-				tempvirusY.push_back(tempY - 1);
-			}
-		}
-		if (tempY + 1 < height)
-		{
-			if (tempvirus[tempY + 1][tempX] == 0)
-			{
-				tempvirus[tempY + 1][tempX] = 2;
-				tempvirusX.push_back(tempX);
-				tempvirusY.push_back(tempY + 1);
-			}
-		}
-		if (tempX - 1 >= 0)
-		{
-			if (tempvirus[tempY][tempX - 1] == 0)
-			{
-				tempvirus[tempY][tempX - 1] = 2;
-				tempvirusX.push_back(tempX - 1);
-				tempvirusY.push_back(tempY);
-			}
-		}
-		if (tempX + 1 < width)
-		{
-			if (tempvirus[tempY][tempX + 1] == 0)
-			{
-				tempvirus[tempY][tempX + 1] = 2;
-				tempvirusX.push_back(tempX + 1);
-				tempvirusY.push_back(tempY);
+			if (templab[i][j] == 2) {
+				q.push({ i,j });
 			}
 		}
 	}
-	for (int i = 0; i < height; i++)
-	{
-		for (int j = 0; j < width; j++)
-		{
-			if (tempvirus[i][j] == 0)
-			{
+	while (!q.empty()) {
+		int tmpy = q.front().first;
+		int tmpx = q.front().second;
+		q.pop();
+		for (int i = 0; i < 4; i++) {
+			int ttmpy = tmpy + dy[i];
+			int ttmpx = tmpx + dx[i];
+			if (ttmpy >= 0 && ttmpy < N && ttmpx >= 0 && ttmpx < M && tempvirus[ttmpy][ttmpx]==0) {
+				tempvirus[ttmpy][ttmpx] = 2;
+				q.push({ ttmpy,ttmpx });
+			}
+		}
+	}
+	int temp = 0;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			if (tempvirus[i][j] == 0) {
 				temp++;
 			}
 		}
 	}
-	if (temp > result)
-	{
-		result = temp;
+	if (temp > maxresult) {
+		maxresult = temp;
 	}
 }
-void findSafe(int cnt)
-{
-	if (cnt == 3)
-	{
+void findsafe(int cnt) {
+	if (cnt == 3) {
 		spreadVirus();
 		return;
 	}
-	for (int i = 0; i < height; i++)
-	{
-		for (int j = 0; j < width; j++)
-		{
-			if (templab[i][j] == 0)
-			{
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			if (templab[i][j] == 0) {
 				templab[i][j] = 1;
-				findSafe(cnt + 1);
+				findsafe(cnt + 1);
 				templab[i][j] = 0;
 			}
 		}
 	}
 }
-int main(void)
-{
-	vector<int> tempV;
-	cin >> height >> width;
-	for (int i = 0; i < height; i++)
-	{
-		for (int j = 0; j < width; j++)
-		{
+int main(void) {
+	cin >> N >> M;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
 			cin >> lab[i][j];
 			templab[i][j] = lab[i][j];
-			if (lab[i][j] == 2)
-			{
-				virusX.push_back(j);
-				virusY.push_back(i);
-			}
 		}
 	}
-	findSafe(0);
-	cout << result;
+	findsafe(0);
+	cout << maxresult;
 	return 0;
 }

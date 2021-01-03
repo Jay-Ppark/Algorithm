@@ -1,85 +1,58 @@
 #include<iostream>
 #include<queue>
 using namespace std;
-int tomato[100][100][100];
-int M;
-int N;
-int H;
+int tbox[100][100][100];
+bool visited[100][100][100];
+int M, N, H;
+queue<pair<int, pair<int, int>>> q;
+int tmtcnt;
 int dz[6] = { -1,1,0,0,0,0 };
-int dy[6] = { 0,0,-1,1 ,0,0 };
+int dy[6] = { 0,0,-1,1,0,0 };
 int dx[6] = { 0,0,0,0,-1,1 };
-int main(void)
-{
+int main(void) {
 	cin >> M >> N >> H;
-	int ripetomato = 0;
-	int tomatocnt = 0;
-	queue<pair<pair<int, int>,int> > tomatoq;
-	for (int s = 0; s < H; s++)
-	{
-		for (int i = 0; i < N; i++)
-		{
-			for (int j = 0; j < M; j++)
-			{
-				cin >> tomato[s][i][j];
-				if (tomato[s][i][j] != -1)
-				{
-					tomatocnt++;
-					if (tomato[s][i][j] == 1)
-					{
-						tomatoq.push({ { i,j },s });
-						ripetomato++;
-					}
+	for (int i = 0; i < H; i++) {
+		for (int j = 0; j < N; j++) {
+			for (int k = 0; k < M; k++) {
+				cin >> tbox[i][j][k];
+				if (tbox[i][j][k] == 1) {
+					q.push({ i,{j,k} });
+					visited[i][j][k] = true;
+				}
+				if (tbox[i][j][k] == 0) {
+					tmtcnt++;
 				}
 			}
 		}
 	}
-	if (ripetomato == 0)
-	{
+	int cnt = 0;
+	while (!q.empty()) {
+		int qsize = q.size();
+		for (int i = 0; i < qsize; i++) {
+			int tmpz = q.front().first;
+			int tmpy = q.front().second.first;
+			int tmpx = q.front().second.second;
+			q.pop();
+			for (int j = 0; j < 6; j++) {
+				int ttmpz = tmpz + dz[j];
+				int ttmpy = tmpy + dy[j];
+				int ttmpx = tmpx + dx[j];
+				if (ttmpz >= 0 && ttmpz < H && ttmpy >= 0 && ttmpy < N && ttmpx >= 0 && ttmpx < M && !visited[ttmpz][ttmpy][ttmpx]) {
+					if (tbox[ttmpz][ttmpy][ttmpx] == 0) {
+						q.push({ ttmpz,{ttmpy,ttmpx} });
+						visited[ttmpz][ttmpy][ttmpx] = true;
+						tmtcnt--;
+					}
+				}
+			}
+		}
+		cnt++;
+	}
+	if (tmtcnt != 0) {
 		cout << -1;
 	}
-	else if (ripetomato == tomatocnt)
-	{
-		cout << 0;
-	}
-	else
-	{
-		int lefttomato = tomatocnt - ripetomato;
-		int day = 0;
-		while (!tomatoq.empty())
-		{
-			int tomatoqSize = tomatoq.size();
-			for (int i = 0; i < tomatoqSize; i++)
-			{
-				int tomatoZ = tomatoq.front().second;
-				int tomatoY = tomatoq.front().first.first;
-				int tomatoX = tomatoq.front().first.second;
-				tomatoq.pop();
-				for (int j = 0; j < 6; j++)
-				{
-					int tempZ = tomatoZ + dz[j];
-					int tempY = tomatoY + dy[j];
-					int tempX = tomatoX + dx[j];
-					if (tempY >= 0 && tempY < N && tempX >= 0 && tempX < M && tempZ>=0 && tempZ<H)
-					{
-						if (tomato[tempZ][tempY][tempX] == 0)
-						{
-							tomatoq.push({{ tempY,tempX }, tempZ });
-							tomato[tempZ][tempY][tempX] = 1;
-							lefttomato--;
-						}
-					}
-				}
-			}
-			day++;
-		}
-		if (lefttomato == 0)
-		{
-			cout << day - 1;
-		}
-		else
-		{
-			cout << -1;
-		}
+	else {
+		cout << cnt - 1;
 	}
 	return 0;
 }

@@ -2,47 +2,39 @@
 #include<queue>
 using namespace std;
 bool visited[100001];
+queue<int> q;
+int startp, endp;
 int cnt;
-int BFS(int startnode, int endnode)
-{
-	queue<int> cal;
-	cal.push(startnode);
-	visited[startnode] = true;
-	while (true)
-	{
-		int calSize = cal.size();
-		for (int i = 0; i < calSize; i++)
-		{
-			int ctop = cal.front();
-			cal.pop();
-			if (ctop == endnode)
-			{
-				return cnt;
+void BFS() {
+	while (!q.empty()) {
+		int qsize = q.size();
+		for (int i = 0; i < qsize; i++) {
+			int tmp = q.front();
+			q.pop();
+			if (tmp == endp) {
+				return;
 			}
-			if (ctop - 1 >= 0 && !visited[ctop - 1])
-			{
-				cal.push(ctop - 1);
-				visited[ctop - 1] = true;
+			if (tmp - 1 >= 0 && !visited[tmp-1]) {
+				q.push(tmp - 1);
+				visited[tmp - 1] = true;
 			}
-			if (ctop + 1 <= 100000 && !visited[ctop + 1])
-			{
-				cal.push(ctop + 1);
-				visited[ctop + 1] = true;
+			if (tmp + 1 <= 100000 && !visited[tmp+1]) {
+				q.push(tmp + 1);
+				visited[tmp + 1] = true;
 			}
-			if (ctop * 2 <= 100000 && !visited[ctop * 2])
-			{
-				cal.push(ctop * 2);
-				visited[ctop * 2] = true;
+			if (tmp * 2 >= 0 && tmp * 2 <= 100000 && !visited[tmp*2]) {
+				q.push(tmp * 2);
+				visited[tmp * 2];
 			}
 		}
 		cnt++;
 	}
 }
-int main(void)
-{
-	int subin;
-	int subinBro;
-	cin >> subin >> subinBro;
-	cout << BFS(subin,subinBro);
+int main(void) {
+	cin >> startp >> endp;
+	q.push(startp);
+	visited[startp] = true;
+	BFS();
+	cout << cnt;
 	return 0;
 }

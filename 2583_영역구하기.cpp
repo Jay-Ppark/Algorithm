@@ -1,79 +1,51 @@
 #include<iostream>
-#include<vector>
 #include<algorithm>
+#include<vector>
 using namespace std;
-int height;
-int width;
-bool visit[100][100];
-int wholemap[100][100];
+int M, N, K;
+int rg[100][100];
+bool visited[100][100];
 int dy[4] = { -1,1,0,0 };
 int dx[4] = { 0,0,-1,1 };
-vector<int> reccntarr;
-int tmprec;
-void DFS(int h, int w)
-{
-	visit[h][w] = true;
-	tmprec++;
-	for (int i = 0; i < 4; i++)
-	{
-		int tmpY = h + dy[i];
-		int tmpX = w + dx[i];
-		if (tmpY >= 0 && tmpY < height && tmpX >= 0 && tmpX < width)
-		{
-			if (wholemap[tmpY][tmpX] != 1 && !visit[tmpY][tmpX])
-			{
-				DFS(tmpY, tmpX);
+int cnt;
+vector<int> result;
+void DFS(int y, int x) {
+	visited[y][x] = true;
+	cnt++;
+	for (int i = 0; i < 4; i++) {
+		int tmpy = y + dy[i];
+		int tmpx = x + dx[i];
+		if (tmpy >= 0 && tmpy < M && tmpx >= 0 && tmpx < N && !visited[tmpy][tmpx]) {
+			if (rg[tmpy][tmpx] == 0) {
+				DFS(tmpy, tmpx);
 			}
 		}
 	}
 }
-int main(void)
-{
-	int reccnt;
-	cin >> height >> width >> reccnt;
-	while (reccnt > 0)
-	{
-		int lx;
-		int ly;
-		int rx;
-		int ry;
-		cin >> lx >> ly >> rx >> ry;
-		for (int i = ly; i < ry; i++)
-		{
-			for (int j = lx; j < rx; j++)
-			{
-				wholemap[i][j] = 1;
+int main(void) {
+	cin >> M >> N >> K;
+	for (int i = 0; i < K; i++) {
+		int x1, y1, x2, y2;
+		cin >> x1 >> y1 >> x2 >> y2;
+		for (int j = y1; j < y2; j++) {
+			for (int k = x1; k < x2; k++) {
+				rg[j][k] = 1;
 			}
 		}
-		reccnt--;
 	}
-	for (int i = 0; i < height; i++)
-	{
-		for (int j = 0; j < width; j++)
-		{
-			if (!visit[i][j] && wholemap[i][j]==0)
-			{
+	for (int i = 0; i < M; i++) {
+		for (int j = 0; j < N; j++) {
+			if (rg[i][j] == 0 && !visited[i][j]) {
 				DFS(i, j);
-				reccntarr.push_back(tmprec);
-				tmprec = 0;
+				result.push_back(cnt);
+				cnt = 0;
 			}
 		}
 	}
-	sort(reccntarr.begin(), reccntarr.end());
-	cout << reccntarr.size() << '\n';
-	for (int i = 0; i < reccntarr.size(); i++)
-	{
-		cout << reccntarr[i] << " ";
+	sort(result.begin(), result.end());
+	cout << result.size() << '\n';
+	for (int i = 0; i < result.size(); i++) {
+		cout << result[i] << " ";
 	}
-	/*
-	for (int i = height-1; i >=0; i--)
-	{
-		for (int j = 0; j < width; j++)
-		{
-			cout << wholemap[i][j];
-		}
-		cout << '\n';
-	}
-	*/
 	return 0;
 }
