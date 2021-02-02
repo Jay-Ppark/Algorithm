@@ -1,57 +1,48 @@
 #include<iostream>
 #include<string>
 #include<algorithm>
-#include<vector>
-#include<stack>;
+#include<stack>
 using namespace std;
-int dp[1001][1001];
-int main(void)
-{
-	string fs;
-	string ss;
-	cin >> fs >> ss;
-	int fslen = fs.length();
-	int sslen = ss.length();
-	for (int i = 1; i <= sslen; i++)
-	{
-		for (int j = 1; j <= fslen; j++)
-		{
-			if (ss[i - 1] == fs[j - 1])
-			{
-				dp[i][j] = dp[i - 1][j - 1] + 1;
+string s1, s2;
+int arr[1001][1001];
+int main(void) {
+	cin >> s1 >> s2;
+	for (int i = 1; i <= s1.length(); i++) {
+		for (int j = 1; j <= s2.length(); j++) {
+			if (s2[j - 1] == s1[i - 1]) {
+				arr[i][j] = arr[i - 1][j - 1] + 1;
 			}
-			else
-			{
-				dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+			else {
+				arr[i][j] = max(arr[i - 1][j], arr[i][j - 1]);
 			}
 		}
 	}
-	int result = dp[sslen][fslen];
+	int result = arr[s1.length()][s2.length()];
 	cout << result << '\n';
-	int cnt = 0;
-	stack<char> s;
-	while (cnt != result)
-	{
-		if (dp[sslen][fslen] == dp[sslen][fslen - 1])
-		{
-			fslen--;
+	if(result!=0) {
+		int cnt = 0;
+		int s1len = s1.length();
+		int s2len = s2.length();
+		stack<char> s;
+		while (cnt != result) {
+			if (arr[s1len][s2len - 1] == arr[s1len][s2len]) {
+				s2len--;
+			}
+			else if (arr[s1len - 1][s2len] == arr[s1len][s2len]) {
+				s1len--;
+			}
+			else if (arr[s1len][s2len] - 1 == arr[s1len - 1][s2len - 1]) {
+				s1len--;
+				s2len--;
+				cnt++;
+				s.push(s2[s2len]);
+			}
 		}
-		else if (dp[sslen][fslen] == dp[sslen - 1][fslen])
-		{
-			sslen--;
-		}
-		else if (dp[sslen][fslen] - 1 == dp[sslen - 1][fslen - 1])
-		{
-			sslen--;
-			fslen--;
-			cnt++;
-			s.push(fs[fslen]);
+		for (int i = 0; i < cnt; i++) {
+			cout<<s.top();
+			s.pop();
 		}
 	}
-	for (int i = 0; i < cnt; i++)
-	{
-		cout << s.top();
-		s.pop();
-	}
+	
 	return 0;
 }

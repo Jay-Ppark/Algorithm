@@ -1,32 +1,25 @@
 #include<iostream>
 #include<vector>
-#include<algorithm>
 using namespace std;
 vector<int> v;
-int main(void)
-{
+int main(void) {
 	int N;
 	cin >> N;
 	int cnt = 0;
-	for (int i = 0; i < N; i++)
-	{
+	for (int i = 0; i < N; i++) {
 		int tmp;
 		cin >> tmp;
-		if (v.empty())
-		{
+		if (v.empty()) {
 			v.push_back(tmp);
 			cnt++;
 		}
-		else
-		{
-			if (tmp > v.back())
-			{
+		else {
+			if (v.back() < tmp) {
 				v.push_back(tmp);
 				cnt++;
 			}
-			else
-			{
-				auto it = lower_bound(v.begin(), v.end(), tmp);
+			else {
+				vector<int>::iterator it = lower_bound(v.begin(), v.end(), tmp);
 				*it = tmp;
 			}
 		}

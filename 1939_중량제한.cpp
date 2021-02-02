@@ -1,90 +1,68 @@
 #include<iostream>
-#include<vector>
 #include<queue>
+#include<vector>
 #include<algorithm>
 using namespace std;
-bool visited[100001];
-int starte;
-int ende;
-vector<pair<int, int>> vb[100001];
-void Init()
-{
-	for (int i = 0; i <= 100000; i++)
-	{
-		visited[i] = false;
+int citynum, roadnum;
+bool visitedcity[100001];
+vector<pair<int, int>> v[100001];
+int highwei;
+int sfac, efac;
+void init() {
+	for (int i = 1; i <= 100000; i++) {
+		visitedcity[i] = false;
 	}
 }
-bool BFS(int w)
-{
-	visited[starte] = true;
+bool BFS(int w) {
 	queue<int> q;
-	q.push(starte);
-	while (!q.empty())
-	{
-		int cur = q.front();
+	visitedcity[sfac] = true;
+	q.push(sfac);
+	while (!q.empty()) {
+		int tmps = q.front();
 		q.pop();
-		if (cur == ende)
-		{
+		if (tmps == efac) {
 			return true;
 		}
-		for (int i = 0; i < vb[cur].size(); i++)
-		{
-			int nexta = vb[cur][i].first;
-			int nextw = vb[cur][i].second;
-			if (!visited[nexta] && w <= nextw)
-			{
-				visited[nexta] = true;
-				q.push(nexta);
+		for (int i = 0; i < v[tmps].size(); i++) {
+			int nextc = v[tmps][i].first;
+			int tmpw = v[tmps][i].second;
+			if (!visitedcity[nextc] && tmpw >= w) {
+				visitedcity[nextc] = true;
+				q.push(nextc);
 			}
 		}
 	}
 	return false;
 }
-int main(void)
-{
-	int N;
-	int M;
-	cin >> N >> M;
-	int maxw = 0;
-	for (int i = 0; i < M; i++)
-	{
-		int tmps;
-		int tmpe;
-		int tmpw;
-		cin >> tmps >> tmpe >> tmpw;
-		vb[tmps].push_back({ tmpe,tmpw });
-		vb[tmpe].push_back({ tmps,tmpw });
-		if (tmpw > maxw)
-		{
-			maxw = tmpw;
+int main(void) {
+	cin >> citynum >> roadnum;
+	for (int i = 0; i < roadnum; i++) {
+		int startc, endc, wei;
+		cin >> startc >> endc >> wei;
+		if (highwei < wei) {
+			highwei = wei;
 		}
+		v[startc].push_back({ endc,wei });
+		v[endc].push_back({ startc,wei });
 	}
-	cin >> starte >> ende;
-	for (int i = 1; i <= N; i++)
-	{
-		sort(vb[i].begin(), vb[i].end());
+	cin >> sfac >> efac;
+	for (int i = 1; i <= citynum; i++) {
+		sort(v[i].begin(), v[i].end());
 	}
-	int loww = 0;
-	int highw = maxw;
-	while (loww <= highw)
-	{
-		int midw = (loww + highw) / 2;
-		if (BFS(midw))
-		{
-			loww = midw + 1;
+	//cout << "start" << '\n';
+	int lowwei = 0;
+	//cout << highwei << " " << lowwei << '\n';
+	while (lowwei <= highwei) {
+		int midwei = (lowwei + highwei) / 2;
+		if (BFS(midwei)) {
+			lowwei = midwei + 1;
 		}
-		else
-		{
-			highw = midw - 1;
+		else {
+			highwei = midwei - 1;
 		}
-		Init();
+		init();
+		//cout << highwei << " " << lowwei << '\n';
 	}
-	cout << highw;
-	/*
-	for (int i = 0; i < vb.size(); i++)
-	{
-		cout << vb[i].first.first << " " << vb[i].first.second << '\n';
-	}
-	*/
+	cout << highwei;
 	return 0;
 }

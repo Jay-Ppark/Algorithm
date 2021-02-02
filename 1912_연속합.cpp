@@ -1,24 +1,24 @@
 #include<iostream>
-#include<algorithm>
 using namespace std;
-int arr[100001];
-int dp[100001];
-int main(void)
-{
+int arr[100000];
+int dp[100000];
+int maxnum = -1000000;
+int main(void) {
 	int n;
-	int result = -1000;
 	cin >> n;
-	for (int i = 1; i <= n; i++)
-	{
+	for (int i = 0; i < n; i++) {
 		cin >> arr[i];
 	}
-	dp[1] = arr[1];
-	for (int i = 2; i <= n; i++)
-	{
-		dp[i] = max(dp[i - 1] + arr[i], arr[i]);
-		result = max(result, dp[i]);
+	dp[0] = arr[0];
+	if (maxnum < dp[0]) {
+		maxnum = dp[0];
 	}
-	result = max(result, dp[1]);
-	cout << result;
+	for (int i = 1; i < n; i++) {
+		dp[i] = max(dp[i - 1] + arr[i], arr[i]);
+		if (maxnum < dp[i]) {
+			maxnum = dp[i];
+		}
+	}
+	cout << maxnum;
 	return 0;
 }

@@ -1,508 +1,188 @@
 #include<iostream>
 #include<vector>
 using namespace std;
-int N, M;
+//{{ y, x }, cctv_num }
+vector <pair<pair<int, int>, int >> cctv;
+vector<int> angle;
+int height, width;
 int arr[8][8];
 bool visited[8][8];
-vector<pair<pair<int, int>,int>> cctv;
-vector<int> cctvangle;
-//int cctvcnt;
-int minresult = 10000;
-void calarr(int cnt) {
-	if (cctv.size() == cnt) {
-		int tempcnt = 0;
-		bool tmpvisited[8][8];
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
+bool tmpvisited[8][8];
+int minresult = 1000000;
+void watch(int angledir, int y, int x) {
+	//right
+	if (angledir == 0) {
+		for (int i = x; i < width; i++) {
+			if (arr[y][i] == 6) {
+				break;
+			}
+			if (!tmpvisited[y][i]) {
+				tmpvisited[y][i] = true;
+			}
+		}
+	}
+	//down
+	else if (angledir == 1) {
+		for (int i = y; i < height; i++) {
+			if (arr[i][x] == 6) {
+				break;
+			}
+			if (!tmpvisited[i][x]) {
+				tmpvisited[i][x] = true;
+			}
+		}
+	}
+	//left
+	else if (angledir == 2) {
+		for (int i = x; i >= 0; i--) {
+			if (arr[y][i] == 6) {
+				break;
+			}
+			if (!tmpvisited[y][i]) {
+				tmpvisited[y][i] = true;
+			}
+		}
+	}
+	//up
+	else if (angledir == 3) {
+		for (int i = y; i >= 0; i--) {
+			if (arr[i][x] == 6) {
+				break;
+			}
+			if (!tmpvisited[i][x]) {
+				tmpvisited[i][x] = true;
+			}
+		}
+	}
+}
+void selectangle(int cnt) {
+	if (cnt == cctv.size()) {
+		//init tmpvisited
+		int tmpresult = 0;
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
 				tmpvisited[i][j] = visited[i][j];
 			}
 		}
-		for (int i = 0; i < cctvangle.size(); i++) {
-			int y = cctv[i].first.first;
-			int x = cctv[i].first.second;
-			//num1 cctv
-			if (cctv[i].second == 1) {
-				//right
-				//cout << "cctv1" << '\n';
-				if (cctvangle[i] == 0) {
-					for (int j = x; j < M; j++) {
-						if (arr[y][j] == 6) {
-							break;
-						}
-						if (!tmpvisited[y][j]) {
-							tmpvisited[y][j] = true;
-						}
-					}
+		for (int i = 0; i < cctv.size(); i++) {
+			//cctv1
+			//one dir
+			int tmpy = cctv[i].first.first;
+			int tmpx = cctv[i].first.second;
+			int cctvnum = cctv[i].second;
+			if (cctvnum == 1) {
+				//angle[i] 방향으로 watch
+				watch(angle[i], tmpy, tmpx);
+			}
+			//left,right / up,down
+			else if (cctvnum == 2) {
+				//left,right
+				if (angle[i] % 2 == 0) {
+					watch(0, tmpy, tmpx);
+					watch(2, tmpy, tmpx);
 				}
-				//left
-				else if (cctvangle[i] == 1) {
-					for (int j = x; j >= 0; j--) {
-						if (arr[y][j] == 6) {
-							break;
-						}
-						if (!tmpvisited[y][j]) {
-							tmpvisited[y][j] = true;
-						}
-					}
-				}
-				//up
-				else if (cctvangle[i] == 2) {
-					for (int j = y; j >= 0; j--) {
-						if (arr[j][x] == 6) {
-							break;
-						}
-						if (!tmpvisited[j][x]) {
-							tmpvisited[j][x] = true;
-						}
-					}
-				}
-				//down
+				//up,down
 				else {
-					for (int j = y; j < N; j++) {
-						if (arr[j][x] == 6) {
-							break;
-						}
-						if (!tmpvisited[j][x]) {
-							tmpvisited[j][x] = true;
-						}
-					}
+					watch(1, tmpy, tmpx);
+					watch(3, tmpy, tmpx);
 				}
 			}
-			//num2 cctv
-			else if (cctv[i].second == 2) {
-				//left to right
-				//cout << "cctv2" << '\n';
-				bool checksix = false;
-				if (cctvangle[i] % 2 == 0) {
-					for (int j = 0; j < M; j++) {
-						if (arr[y][j] == 6) {
-							if (j < x) {
-								for (int k = j+1; k < M; k++) {
-									if (!tmpvisited[y][k]) {
-										tmpvisited[y][k] = true;
-									}
-								}
-								checksix = true;
-								break;
-							}
-							else {
-								for (int k = 0; k < j; k++) {
-									if (!tmpvisited[y][k]) {
-										tmpvisited[y][k] = true;
-									}
-								}
-								checksix = true;
-								break;
-							}
-						}
-					}
-					if (!checksix) {
-						for (int j = 0; j < M; j++) {
-							if (!tmpvisited[y][j]) {
-								tmpvisited[y][j] = true;
-							}
-						}
-					}
-				}
-				//up to down
-				else{
-					for (int j = 0; j < N; j++) {
-						if (arr[j][x] == 6) {
-							if (j < y) {
-								for (int k = j+1; k < N; k++) {
-									if (!tmpvisited[k][x]) {
-										tmpvisited[k][x] = true;
-									}
-								}
-								checksix = true;
-								break;
-							}
-							else {
-								for (int k = 0; k < j; k++) {
-									if (!tmpvisited[k][x]) {
-										tmpvisited[k][x] = true;
-									}
-								}
-								checksix = true;
-								break;
-							}
-						}
-					}
-					if (!checksix) {
-						for (int j = 0; j < N; j++) {
-							if (!tmpvisited[j][x]) {
-								tmpvisited[j][x] = true;
-							}
-						}
-					}
-				}
-			}
-			//num3 cctv
+			//90 angle two dir
 			else if (cctv[i].second == 3) {
-				//up right
-				//cout << "cctv3" << '\n';
-				if (cctvangle[i] == 0) {
-					//up
-					for (int j = y; j >= 0; j--) {
-						if (arr[j][x] == 6) {
-							break;
-						}
-						if (!tmpvisited[j][x]) {
-							tmpvisited[j][x] = true;
-						}
-					}
-					//right
-					for (int j = x; j < M; j++) {
-						if (arr[y][j] == 6) {
-							break;
-						}
-						if (!tmpvisited[y][j]) {
-							tmpvisited[y][j] = true;
-						}
-					}
+				//0 right, 1 down, 2 left, 3 up
+				//up,right
+				if (angle[i] == 0) {
+					watch(3, tmpy, tmpx);
+					watch(0, tmpy, tmpx);
 				}
-				//right down
-				else if (cctvangle[i] == 1) {
-					//right
-					for (int j = x; j < M; j++) {
-						if (arr[y][j] == 6) {
-							break;
-						}
-						if (!tmpvisited[y][j]) {
-							tmpvisited[y][j] = true;
-						}
-					}
-					//down
-					for (int j = y; j < N; j++) {
-						if (arr[j][x] == 6) {
-							break;
-						}
-						if (!tmpvisited[j][x]) {
-							tmpvisited[j][x] = true;
-						}
-					}
+				//right,down
+				else if (angle[i] == 1) {
+					watch(0, tmpy, tmpx);
+					watch(1, tmpy, tmpx);
 				}
-				//down left
-				else if (cctvangle[i] == 2) {
-					//left
-					for (int j = x; j >= 0; j--) {
-						if (arr[y][j] == 6) {
-							break;
-						}
-						if (!tmpvisited[y][j]) {
-							tmpvisited[y][j] = true;
-						}
-					}
-					//down
-					for (int j = y; j < N; j++) {
-						if (arr[j][x] == 6) {
-							break;
-						}
-						if (!tmpvisited[j][x]) {
-							tmpvisited[j][x] = true;
-						}
-					}
+				//down,left
+				else if (angle[i] == 2) {
+					watch(1, tmpy, tmpx);
+					watch(2, tmpy, tmpx);
 				}
-				//left up
+				//left,up
 				else {
-					//left
-					for (int j = x; j >= 0; j--) {
-						if (arr[y][j] == 6) {
-							break;
-						}
-						if (!tmpvisited[y][j]) {
-							tmpvisited[y][j] = true;
-						}
-					}
-					//up
-					for (int j = y; j >= 0; j--) {
-						if (arr[j][x] == 6) {
-							break;
-						}
-						if (!tmpvisited[j][x]) {
-							tmpvisited[j][x] = true;
-						}
-					}
+					watch(2, tmpy, tmpx);
+					watch(3, tmpy, tmpx);
 				}
 			}
-			//num4 cctv
+			//three dir
 			else if (cctv[i].second == 4) {
-				//left to right, up
-				//cout << "cctv4" << '\n';
-				bool checksix = false;
-				if (cctvangle[i] == 0) {
-					//left to right
-					for (int j = 0; j < M; j++) {
-						if (arr[y][j] == 6) {
-							if (j < x) {
-								for (int k = j + 1; k < M; k++) {
-									if (!tmpvisited[y][k]) {
-										tmpvisited[y][k] = true;
-									}
-								}
-								checksix = true;
-								break;
-							}
-							else {
-								for (int k = 0; k < j; k++) {
-									if (!tmpvisited[y][k]) {
-										tmpvisited[y][k] = true;
-									}
-								}
-								checksix = true;
-								break;
-							}
-						}
-					}
-					if (!checksix) {
-						for (int j = 0; j < M; j++) {
-							if (!tmpvisited[y][j]) {
-								tmpvisited[y][j] = true;
-							}
-						}
-					}
-					//up
-					for (int j = y; j >= 0; j--) {
-						if (arr[j][x] == 6) {
-							break;
-						}
-						if (!tmpvisited[j][x]) {
-							tmpvisited[j][x] = true;
-						}
-					}
+				//left, up, right
+				if (angle[i] == 0) {
+					watch(2, tmpy, tmpx);
+					watch(3, tmpy, tmpx);
+					watch(0, tmpy, tmpx);
 				}
-				//up to down, right
-				else if (cctvangle[i] == 1) {
-					//up to down
-					for (int j = 0; j < N; j++) {
-						if (arr[j][x] == 6) {
-							if (j < y) {
-								for (int k = j + 1; k < N; k++) {
-									if (!tmpvisited[k][x]) {
-										tmpvisited[k][x] = true;
-									}
-								}
-								checksix = true;
-								break;
-							}
-							else {
-								for (int k = 0; k < j; k++) {
-									if (!tmpvisited[k][x]) {
-										tmpvisited[k][x] = true;
-									}
-								}
-								checksix = true;
-								break;
-							}
-						}
-					}
-					if (!checksix) {
-						for (int j = 0; j < N; j++) {
-							if (!tmpvisited[j][x]) {
-								tmpvisited[j][x] = true;
-							}
-						}
-					}
-					//right
-					for (int j = x; j < M; j++) {
-						if (arr[y][j] == 6) {
-							break;
-						}
-						if (!tmpvisited[y][j]) {
-							tmpvisited[y][j] = true;
-						}
-					}
+				//up, right, down
+				else if (angle[i] == 1) {
+					watch(3, tmpy, tmpx);
+					watch(0, tmpy, tmpx);
+					watch(1, tmpy, tmpx);
 				}
-				//left to right, down
-				else if (cctvangle[i] == 2) {
-					//left to right
-					for (int j = 0; j < M; j++) {
-						if (arr[y][j] == 6) {
-							if (j < x) {
-								for (int k = j+1; k < M; k++) {
-									if (!tmpvisited[y][k]) {
-										tmpvisited[y][k] = true;
-									}
-								}
-								checksix = true;
-								break;
-							}
-							else {
-								for (int k = 0; k < j; k++) {
-									if (!tmpvisited[y][k]) {
-										tmpvisited[y][k] = true;
-									}
-								}
-								checksix = true;
-								break;
-							}
-						}
-					}
-					if (!checksix) {
-						for (int j = 0; j < M; j++) {
-							if (!tmpvisited[y][j]) {
-								tmpvisited[y][j] = true;
-							}
-						}
-					}
-					//down
-					for (int j = y; j < N; j++) {
-						if (arr[j][x] == 6) {
-							break;
-						}
-						if (!tmpvisited[j][x]) {
-							tmpvisited[j][x] = true;
-						}
-					}
+				//right, down, left
+				else if (angle[i] == 2) {
+					watch(0, tmpy, tmpx);
+					watch(1, tmpy, tmpx);
+					watch(2, tmpy, tmpx);
 				}
-				//up to down, left
+				//down, left, up
 				else {
-					//up to down
-					for (int j = 0; j < N; j++) {
-						if (arr[j][x] == 6) {
-							if (j < y) {
-								for (int k = j + 1; k < N; k++) {
-									if (!tmpvisited[k][x]) {
-										tmpvisited[k][x] = true;
-									}
-								}
-								checksix = true;
-								break;
-							}
-							else {
-								for (int k = 0; k < j; k++) {
-									if (!tmpvisited[k][x]) {
-										tmpvisited[k][x] = true;
-									}
-								}
-								checksix = true;
-								break;
-							}
-						}
-					}
-					if (!checksix) {
-						for (int j = 0; j < N; j++) {
-							if (!tmpvisited[j][x]) {
-								tmpvisited[j][x] = true;
-							}
-						}
-					}
-					//left
-					for (int j = x; j >= 0; j--) {
-						if (arr[y][j] == 6) {
-							break;
-						}
-						if (!tmpvisited[y][j]) {
-							tmpvisited[y][j] = true;
-						}
-					}
+					watch(1, tmpy, tmpx);
+					watch(2, tmpy, tmpx);
+					watch(3, tmpy, tmpx);
 				}
 			}
-			//num5 cctv
+			//four dir
 			else {
-				bool checksix = false;
-				//cout << "cctv5" << '\n';
-				//4way
-				//left to right
-				for (int j = 0; j < M; j++) {
-					if (arr[y][j] == 6) {
-						if (j < x) {
-							for (int k = j + 1; k < M; k++) {
-								if (!tmpvisited[y][k]) {
-									tmpvisited[y][k] = true;
-								}
-							}
-							checksix = true;
-							break;
-						}
-						else {
-							for (int k = 0; k < j; k++) {
-								if (!tmpvisited[y][k]) {
-									tmpvisited[y][k] = true;
-								}
-							}
-							checksix = true;
-							break;
-						}
-					}
-				}
-				if (!checksix) {
-					for (int j = 0; j < M; j++) {
-						if (!tmpvisited[y][j]) {
-							tmpvisited[y][j] = true;
-						}
-					}
-				}
-				//up to down
-				for (int j = 0; j < N; j++) {
-					if (arr[j][x] == 6) {
-						if (j < y) {
-							for (int k = j + 1; k < N; k++) {
-								if (!tmpvisited[k][x]) {
-									tmpvisited[k][x] = true;
-								}
-							}
-							checksix = true;
-							break;
-						}
-						else {
-							for (int k = 0; k < j; k++) {
-								if (!tmpvisited[k][x]) {
-									tmpvisited[k][x] = true;
-								}
-							}
-							checksix = true;
-							break;
-						}
-					}
-				}
-				if (!checksix) {
-					for (int j = 0; j < N; j++) {
-						if (!tmpvisited[j][x]) {
-							tmpvisited[j][x] = true;
-						}
-					}
+				watch(0, tmpy, tmpx);
+				watch(1, tmpy, tmpx);
+				watch(2, tmpy, tmpx);
+				watch(3, tmpy, tmpx);
+			}
+		}
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				if (!tmpvisited[i][j]) {
+					tmpresult++;
 				}
 			}
 		}
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {
-				if (!tmpvisited[i][j]) {
-					tempcnt++;
-				}
-			}	
-		}
-		//cout << "--------------" << '\n';
-		//cout << tempcnt << '\n';
-		if (tempcnt < minresult) {
-			minresult = tempcnt;
+		if (tmpresult < minresult) {
+			minresult = tmpresult;
 		}
 		return;
 	}
-	//cctv 개수 만큼
+	// 모든 각도 try
 	for (int i = 0; i < 4; i++) {
-		cctvangle.push_back(i);
-		calarr(cnt + 1);
-		cctvangle.pop_back();
+		angle.push_back(i);
+		selectangle(cnt + 1);
+		angle.pop_back();
 	}
 }
 int main(void) {
-	cin >> N >> M;
-	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < M; j++) {
+	//가로 세로 최대 크기 입력
+	cin >> height >> width;
+	//사무실 각 칸의 정보 입력
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++) {
 			cin >> arr[i][j];
+			//cctv일 경우 cctv vector에 추가
 			if (arr[i][j] >= 1 && arr[i][j] <= 5) {
-				cctv.push_back({ { i,j },arr[i][j] });
+				cctv.push_back({ {i,j},arr[i][j] });
 				visited[i][j] = true;
-				//cctvcnt++;
 			}
 			else if (arr[i][j] == 6) {
 				visited[i][j] = true;
 			}
 		}
 	}
-	calarr(0);
+	selectangle(0);
 	cout << minresult;
-	//cout << cctv.size() << " " << cctvcnt;
 	return 0;
 }

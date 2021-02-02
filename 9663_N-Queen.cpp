@@ -1,40 +1,32 @@
 #include<iostream>
+#include<cstdlib>
 using namespace std;
-int line[14];
-int result;
-int queen;
+int queens[14];
 int N;
-bool checkQueen(int y)
-{
-	for (int i = 0; i < y; i++)
-	{
-		if (line[y] == line[i] || y - i == abs(line[y] - line[i]))
-		{
+int result;
+bool checkqueen(int q) {
+	for (int j = 0; j < q; j++) {
+		if ((queens[q] == queens[j]) || (q - j == abs(queens[q] - queens[j]))) {
 			return false;
 		}
 	}
 	return true;
 }
-void findAnswer(int y)
-{
-	if (y == N)
-	{
+void movequeen(int queen) {
+	if (queen == N) {
 		result++;
 		return;
 	}
-	for (int i = 0; i < N; i++)
-	{
-		line[y] = i;
-		if (checkQueen(y))
-		{
-			findAnswer(y + 1);
+	for (int i = 0; i < N; i++) {
+		queens[queen] = i;
+		if (checkqueen(queen)) {
+			movequeen(queen + 1);
 		}
 	}
 }
-int main(void)
-{
+int main(void) {
 	cin >> N;
-	findAnswer(0);
+	movequeen(0);
 	cout << result;
 	return 0;
 }

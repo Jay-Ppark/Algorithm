@@ -1,30 +1,25 @@
 #include<iostream>
 #include<vector>
 using namespace std;
-int N;
 vector<pair<int, int>> v;
-void solve(int num, int from, int by, int to)
-{
-	if (num == 1)
-	{
+void Hanoi(int diskN, int from, int by, int to) {
+	if (diskN == 1) {
 		v.push_back({ from,to });
 	}
-	else
-	{
-		solve(num - 1, from, to, by);
+	else {
+		Hanoi(diskN - 1, from, to, by);
 		v.push_back({ from,to });
-		solve(num - 1, by, from, to);
+		Hanoi(diskN - 1, by, from, to);
 	}
 }
-int main(void)
-{
-	ios::sync_with_stdio(false);
+int main(void) {
 	cin.tie(NULL);
+	ios::sync_with_stdio(false);
+	int N;
 	cin >> N;
-	solve(N, 1, 2, 3);
+	Hanoi(N, 1, 2, 3);
 	cout << v.size() << '\n';
-	for (int i = 0; i < v.size(); i++)
-	{
+	for (int i = 0; i < v.size(); i++) {
 		cout << v[i].first << " " << v[i].second << '\n';
 	}
 	return 0;
