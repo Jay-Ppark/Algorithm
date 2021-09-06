@@ -3,33 +3,28 @@
 #include<algorithm>
 #include<vector>
 using namespace std;
-vector<string> arr;
-bool compare(string s1, string s2)
-{
-	if (s1.size() == s2.size())
-	{
+vector<string> v;
+bool compare(string s1, string s2){
+	if (s1.size() == s2.size()){
 		return s1 < s2;
 	}
-	else
-	{
+	else{
 		return s1.size() < s2.size();
 	}
 }
-int main(void)
-{
+int main(void){
 	int N;
 	cin >> N;
-	string temp;
-	for (int i = 0; i < N; i++)
-	{
-		cin >> temp;
-		arr.push_back(temp);
+	string tmp;
+	for (int i = 0; i < N; i++){
+		cin >> tmp;
+		v.push_back(tmp);
 	}
-	sort(arr.begin(), arr.end(), compare);
-	arr.erase(unique(arr.begin(), arr.end()), arr.end());
-	for (int i = 0; i < arr.size(); i++)
+	sort(v.begin(), v.end(), compare);
+	v.erase(unique(v.begin(), v.end()), v.end());
+	for (int i = 0; i < v.size(); i++)
 	{
-		cout << arr.at(i) << '\n';
+		cout << v[i] << '\n';
 	}
 	return 0;
 }

@@ -1,66 +1,64 @@
 #include<iostream>
 #include<string>
 using namespace std;
+string white = "WBWBWBWB";
+string black = "BWBWBWBW";
 char board[50][50];
-int M, N;
-string opt1 = "WBWBWBWB";
-string opt2 = "BWBWBWBW";
-int DFS(int h, int w) {
-	if (h + 7 >= M || w + 7 >= N) {
+int height, width;
+int calboard(int h, int w){
+	if (h+8 > height || w+8 > width){
 		return -1;
 	}
-	else {
-		int cnt1 = 0;
-		int cnt2 = 0;
-		int index = 0;
-		for (int i = h; i < h + 8; i++) {
-			for (int j = w; j < w + 8; j++) {
-				if (i % 2 == 0) {
-					if (board[i][j] != opt1[index]) {
-						cnt1++;
-					}
-					if (board[i][j] != opt2[index]) {
-						cnt2++;
-					}
+	int cntW=0;
+	int cntB=0;
+	int sindex=0;
+	for(int i=h;i<h+8;i++){
+		sindex=0;
+		for(int j=w;j<w+8;j++){
+			if(i%2==0){
+				if(board[i][j]!=white[sindex]){
+					cntW++;
 				}
-				else {
-					if (board[i][j] != opt2[index]) {
-						cnt1++;
-					}
-					if (board[i][j] != opt1[index]) {
-						cnt2++;
-					}
+				if(board[i][j]!=black[sindex]){
+					cntB++;
 				}
-				index++;
 			}
-			index = 0;
+			else{
+				if(board[i][j]!=black[sindex]){
+					cntW++;
+				}
+				if(board[i][j]!=white[sindex]){
+					cntB++;
+				}
+			}
+			sindex++;
 		}
-		if (cnt1 >= cnt2) {
-			return cnt2;
-		}
-		else {
-			return cnt1;
-		}
+	}
+	if(cntW>cntB){
+		return cntB;
+	}
+	else{
+		return cntW;
 	}
 }
-int main(void) {
-	cin >> M >> N;
-	for (int i = 0;  i < M; i++) {
-		for (int j = 0; j < N; j++) {
-			cin >> board[i][j];
+int main(void){
+	cin>>height>>width;
+	for(int i=0;i<height;i++){
+		for(int j=0;j<width;j++){
+			cin>>board[i][j];
 		}
 	}
-	int mintmp = 100;
-	for (int i = 0; i < M; i++) {
-		for (int j = 0; j < N; j++) {
-			int tmp = DFS(i, j);
-			if (tmp != -1) {
-				if (mintmp > tmp) {
-					mintmp = tmp;
+	int mincnt=65;
+	for(int i=0;i<height;i++){
+		for(int j=0;j<width;j++){
+			int tmpcnt = calboard(i,j);
+			if(tmpcnt!=-1){
+				if(mincnt>tmpcnt){
+					mincnt=tmpcnt;
 				}
 			}
 		}
 	}
-	cout << mintmp;
+	cout<<mincnt;
 	return 0;
 }
