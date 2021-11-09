@@ -4,41 +4,40 @@ using namespace std;
 string white = "WBWBWBWB";
 string black = "BWBWBWBW";
 char board[50][50];
-int height, width;
-int calboard(int h, int w){
-	if (h+8 > height || w+8 > width){
+int width, height;
+int calculate(int h, int w){
+	if(h+8>height || w+8>width){
 		return -1;
 	}
-	int cntW=0;
-	int cntB=0;
-	int sindex=0;
+	int cntw = 0;
+	int cntb = 0;
 	for(int i=h;i<h+8;i++){
-		sindex=0;
+		int index=0;
 		for(int j=w;j<w+8;j++){
 			if(i%2==0){
-				if(board[i][j]!=white[sindex]){
-					cntW++;
+				if(board[i][j]!=white[index]){
+					cntw++;
 				}
-				if(board[i][j]!=black[sindex]){
-					cntB++;
+				if(board[i][j]!=black[index]){
+					cntb++;
 				}
 			}
 			else{
-				if(board[i][j]!=black[sindex]){
-					cntW++;
+				if(board[i][j]!=white[index]){
+					cntb++;
 				}
-				if(board[i][j]!=white[sindex]){
-					cntB++;
+				if(board[i][j]!=black[index]){
+					cntw++;
 				}
 			}
-			sindex++;
+			index++;
 		}
 	}
-	if(cntW>cntB){
-		return cntB;
+	if(cntw<=cntb){
+		return cntw;
 	}
 	else{
-		return cntW;
+		return cntb;
 	}
 }
 int main(void){
@@ -48,13 +47,13 @@ int main(void){
 			cin>>board[i][j];
 		}
 	}
-	int mincnt=65;
+	int mincnt = 100;
 	for(int i=0;i<height;i++){
 		for(int j=0;j<width;j++){
-			int tmpcnt = calboard(i,j);
-			if(tmpcnt!=-1){
-				if(mincnt>tmpcnt){
-					mincnt=tmpcnt;
+			int tmpmin = calculate(i,j);
+			if(tmpmin!=-1){
+				if(mincnt>tmpmin){
+					mincnt=tmpmin;
 				}
 			}
 		}

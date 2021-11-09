@@ -1,43 +1,32 @@
 #include<iostream>
-#include<vector>
 using namespace std;
-vector <int> v;
 bool visited[21];
-int answer;
+int arr[21];
+int arrSize;
+int resultSum;
 int cnt;
-int answerCnt;
-int N;
-void findAnswer(int start,int result)
-{
-	if (cnt > 0)
-	{
-		if (result == answer)
-		{
-			answerCnt++;
+int len;
+void findAll(int startIndex,int result){
+	if(len>0){
+		if(result==resultSum){
+			cnt++;
 		}
 	}
-	for (int i = start; i <= N; i++)
-	{
-		if (!visited[i])
-		{
-			cnt++;
-			visited[i] = true;
-			findAnswer(i, result + v[i]);
-			visited[i] = false;
+	for(int i=startIndex;i<arrSize;i++){
+		if(!visited[i]){
+			len++;
+			visited[i]=true;
+			findAll(i,result+arr[i]);
+			visited[i]=false;
 		}
 	}
 }
-int main(void)
-{
-	cin >> N >> answer;
-	v.push_back(0);
-	for (int i = 0; i < N; i++)
-	{
-		int temp;
-		cin >> temp;
-		v.push_back(temp);
+int main(void){
+	cin>>arrSize>>resultSum;
+	for(int i=0;i<arrSize;i++){
+		cin>>arr[i];
 	}
-	findAnswer(1, 0);
-	cout << answerCnt;
+	findAll(0,0);
+	cout<<cnt;
 	return 0;
 }
