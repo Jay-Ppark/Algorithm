@@ -1,223 +1,195 @@
-#include <iostream>
-#include <vector>
+#include<iostream>
+#include<vector>
 using namespace std;
- 
-struct fish {
+struct fish{
     int y;
     int x;
-    int dir;
+    int d;
 };
-int sharky, sharkx; 
-int maxEating;
-int tempRoute[3], route[3];
-int smellMap[4][4];
-vector<fish> fishMap[4][4];
-vector<fish> cMap[4][4];
- 
-int fdy[] = { 0, 0, -1, -1, -1, 0, 1, 1, 1 };
-int fdx[] = { 0, -1, -1, 0, 1, 1, 1, 0, -1 };
- 
-int sdy[] = { 0, -1, 0, 1, 0 };
-int sdx[] = { 0, 0, -1, 0, 1 };
-  
-void copyMap(vector<fish> A[4][4], vector<fish> B[4][4]) {
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            A[i][j] = B[i][j];
+int sharky,sharkx;
+vector<fish> fishmap[4][4];
+vector<fish> copyfishmap[4][4];
+int smellmap[4][4];
+int tmproute[3];
+int route[3];
+int sy[5]={0,-1,0,1,0};
+int sx[5]={0,0,-1,0,1};
+int fy[9]={0,0,-1,-1,-1,0,1,1,1};
+int fx[9]={0,-1,-1,0,1,1,1,0,-1};
+int eatfishmax=-1;
+void copyfish(vector<fish> needcopy[4][4],vector<fish> original[4][4]){
+    for(int i=0;i<4;i++){
+        for(int j=0;j<4;j++){
+            needcopy[i][j]=original[i][j];
         }
     }
 }
- 
-void copyFish() {
-    copyMap(cMap, fishMap);
-}
- 
-int changeDir(int d) {
+int changed(int d){
     if(d==1){
-        d=8;
+        return 8;
     }
     else if(d==2){
-        d=1;
+        return 1;
     }
     else if(d==3){
-        d=2;
+        return 2;
     }
     else if(d==4){
-        d=3;
+        return 3;
     }
     else if(d==5){
-        d=4;
+        return 4;
     }
     else if(d==6){
-        d=5;
+        return 5;
     }
     else if(d==7){
-        d=6;
+        return 6;
     }
     else{
-        d=7;
+        return 7;
     }
-    return d;
 }
- 
-void moveFish() {
-    vector<fish> tempMap[4][4];
- 
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            for (int k = 0; k < fishMap[i][j].size(); k++) {
-                int y = fishMap[i][j][k].y;
-                int x = fishMap[i][j][k].x;
-                int dir = fishMap[i][j][k].dir;
+void movefish(){
+    vector<fish> tmpfishmap[4][4];
+    for(int i=0;i<4;i++){
+        for(int j=0;j<4;j++){
+            for(int k=0;k<fishmap[i][j].size();k++){
+                bool check=false;
+                int y=i;
+                int x=j;
+                int d=fishmap[i][j][k].d;
                 int ny = y;
                 int nx = x;
-                bool Flag = false;
-                for (int l = 0; l < 8; l++) {
-                    ny = y + fdy[dir];
-                    nx = x + fdx[dir];
-                    if (nx >= 0 && ny >= 0 && nx < 4 && ny < 4) {
-                        if ((nx == sharkx) && (ny == sharky)){
-
+                for(int t=0;t<8;t++){
+                    ny=y+fy[d];
+                    nx=x+fx[d];
+                    if(ny>=0&&ny<4&&nx>=0&&nx<4){
+                        if((ny==sharky&&nx==sharkx)||smellmap[ny][nx]!=0){
+                            d=changed(d);
                         }
                         else{
-                            if(smellMap[ny][nx]==0){
-                                Flag=true;
-                                break;
-                            }
+                            check=true;
+                            break;
                         }
                     }
-                    dir = changeDir(dir);
+                    else{
+                        d=changed(d);
+                    }
                 }
-                if (Flag == true) {
-                    fish f = { ny, nx, dir };
-                    tempMap[ny][nx].push_back(f);
+                if(check){
+                    tmpfishmap[ny][nx].push_back({ny,nx,d});
                 }
-                else {
-                    fish f = { y, x, dir };
-                    tempMap[y][x].push_back(f);
+                else{
+                    tmpfishmap[y][x].push_back({y,x,d});
                 }
             }
         }
     }
-    copyMap(fishMap, tempMap);
-}
- 
-int routeSimulation() {
-    bool visit[4][4] = { false, };
-    int x = sharkx;
-    int y = sharky;
-    int eat = 0;
-    for (int i = 0; i < 3; i++) {
-        int dir = tempRoute[i];
-        int nx = x + sdx[dir];
-        int ny = y + sdy[dir];
-        if (nx < 0 || ny < 0 || nx >= 4 || ny >= 4) return -1;
-        if (visit[ny][nx] == false) {
-            visit[ny][nx] = true;
-            eat += fishMap[ny][nx].size();
+    for(int i=0;i<4;i++){
+        for(int j=0;j<4;j++){
+            fishmap[i][j]=tmpfishmap[i][j];
         }
-        x = nx;
-        y = ny;
     }
-    return eat;
 }
- 
-void findRoute(int cnt) {
-    if (cnt == 3) {
-        int eatNum = routeSimulation();
-        if (eatNum > maxEating) {
-            for (int i = 0; i < 3; i++) {
-                route[i] = tempRoute[i];
+int calfish(){
+    bool visited[4][4]={false,};
+    int tmpsy=sharky;
+    int tmpsx=sharkx;
+    int result=0;
+    for(int i=0;i<3;i++){
+        tmpsy=tmpsy+sy[tmproute[i]];
+        tmpsx=tmpsx+sx[tmproute[i]];
+        if(tmpsy<0||tmpsy>=4||tmpsx<0||tmpsx>=4){
+            return -1;
+        }
+        else{
+            if(!visited[tmpsy][tmpsx]){
+                visited[tmpsy][tmpsx]=true;
+                result=result+fishmap[tmpsy][tmpsx].size();
             }
-            maxEating = eatNum;
+        }
+    }
+    return result;
+}
+void findroute(int cnt){
+    if(cnt==3){
+        int tmpmax=calfish();
+        if(tmpmax>eatfishmax){
+            eatfishmax=tmpmax;
+            for(int i=0;i<3;i++){
+                route[i]=tmproute[i];
+            }
         }
         return;
     }
- 
-    for (int i = 1; i <= 4; i++) {
-        tempRoute[cnt] = i;
-        findRoute(cnt + 1);
+    for(int i=1;i<=4;i++){
+        tmproute[cnt]=i;
+        findroute(cnt+1);
     }
 }
- 
-void moveShark(int time) {
-    vector<fish> tempMap[4][4];
-    copyMap(tempMap, fishMap);
- 
-    int x = sharkx;
-    int y = sharky;
-    for (int i = 0; i < 3; i++) {
-        int dir = route[i];
-        int nx = x + sdx[dir];
-        int ny = y + sdy[dir];
-        if (tempMap[ny][nx].size() != 0) {
-            smellMap[ny][nx] = time;
-            tempMap[ny][nx].clear();
+void moveshark(int t){
+    findroute(0);
+    for(int i=0;i<3;i++){
+        sharky=sharky+sy[route[i]];
+        sharkx=sharkx+sx[route[i]];
+        if(!fishmap[sharky][sharkx].empty()){
+            fishmap[sharky][sharkx].clear();
+            smellmap[sharky][sharkx]=t;
         }
-        x = nx;
-        y = ny;
-        sharky = y;
-        sharkx = x;
     }
-    copyMap(fishMap, tempMap);
 }
- 
-void aboutShark(int time) {
-    maxEating = -1;
-    findRoute(0);
-    moveShark(time);
-}
- 
-void removeSmell(int time) {
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            if (smellMap[i][j] == 0) continue;
-            if (time - smellMap[i][j] == 2) {
-                smellMap[i][j] = 0;
+void deletesmell(int t){
+    for(int i=0;i<4;i++){
+        for(int j=0;j<4;j++){
+            if(t-smellmap[i][j]==2){
+                smellmap[i][j]=0;
             }
         }
     }
 }
- 
-void bornFish() {
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            for (int k = 0; k < cMap[i][j].size(); k++) {
-                fishMap[i][j].push_back(cMap[i][j][k]);
+void domagic(){
+    for(int i=0;i<4;i++){
+        for(int j=0;j<4;j++){
+            for(int k=0;k<copyfishmap[i][j].size();k++){
+                fishmap[i][j].push_back(copyfishmap[i][j][k]);
             }
         }
     }
 }
- 
-int findAnswer() {
-    int ret = 0;
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            ret += fishMap[i][j].size();
-        }
+void init(){
+    for(int i=0;i<3;i++){
+        tmproute[i]=0;
     }
-    return ret;
 }
-int main(void) {
-    int fishnum, magicnum;
-    cin >> fishnum >> magicnum;
-    for (int i = 0; i < fishnum; i++) {
-        int y, x, d;
-        cin >> y >> x >> d;
-        x--; y--;
-        fish f = { y, x, d };
-        fishMap[y][x].push_back(f);
+int main(void){
+    int fishnum;
+    int magicnum;
+    cin>>fishnum>>magicnum;
+    for(int i=0;i<fishnum;i++){
+        int y,x,d;
+        cin>>y>>x>>d;
+        fish f={y-1,x-1,d};
+        fishmap[y-1][x-1].push_back(f);
     }
-    cin >> sharky >> sharkx;
+    cin>>sharky>>sharkx;
     sharky--;
     sharkx--;
     for(int i=1;i<=magicnum;i++){
-        copyFish();
-        moveFish();
-        aboutShark(i);
-        removeSmell(i);
-        bornFish();
+        copyfish(copyfishmap,fishmap);
+        eatfishmax=-1;
+        init();
+        movefish();
+        moveshark(i);
+        deletesmell(i);
+        domagic();
     }
-    cout<<findAnswer();
+    int answer=0;
+    for(int i=0;i<4;i++){
+        for(int j=0;j<4;j++){
+            answer=answer+fishmap[i][j].size();
+        }
+    }
+    cout<<answer;
     return 0;
 }

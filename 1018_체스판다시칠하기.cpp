@@ -1,63 +1,60 @@
 #include<iostream>
 #include<string>
 using namespace std;
-string white = "WBWBWBWB";
-string black = "BWBWBWBW";
-char board[50][50];
-int width, height;
-int calculate(int h, int w){
-	if(h+8>height || w+8>width){
-		return -1;
-	}
-	int cntw = 0;
-	int cntb = 0;
-	for(int i=h;i<h+8;i++){
+char boardgame[50][50];
+string wstart="WBWBWBWB";
+string bstart="BWBWBWBW";
+int cal(int N,int M){
+	int wdiff=0;
+	int bdiff=0;
+	for(int i=N;i<N+8;i++){
 		int index=0;
-		for(int j=w;j<w+8;j++){
+		for(int j=M;j<M+8;j++){
 			if(i%2==0){
-				if(board[i][j]!=white[index]){
-					cntw++;
+				if(wstart[index]!=boardgame[i][j]){
+					wdiff++;
 				}
-				if(board[i][j]!=black[index]){
-					cntb++;
+				if(bstart[index]!=boardgame[i][j]){
+					bdiff++;
 				}
 			}
 			else{
-				if(board[i][j]!=white[index]){
-					cntb++;
+				if(bstart[index]!=boardgame[i][j]){
+					wdiff++;
 				}
-				if(board[i][j]!=black[index]){
-					cntw++;
+				if(wstart[index]!=boardgame[i][j]){
+					bdiff++;
 				}
 			}
 			index++;
 		}
 	}
-	if(cntw<=cntb){
-		return cntw;
+	if(wdiff<bdiff){
+		return wdiff;
 	}
 	else{
-		return cntb;
+		return bdiff;
 	}
 }
 int main(void){
-	cin>>height>>width;
-	for(int i=0;i<height;i++){
-		for(int j=0;j<width;j++){
-			cin>>board[i][j];
+	int N,M;
+	cin>>N>>M;
+	for(int i=0;i<N;i++){
+		for(int j=0;j<M;j++){
+			cin>>boardgame[i][j];
 		}
 	}
-	int mincnt = 100;
-	for(int i=0;i<height;i++){
-		for(int j=0;j<width;j++){
-			int tmpmin = calculate(i,j);
-			if(tmpmin!=-1){
-				if(mincnt>tmpmin){
-					mincnt=tmpmin;
+	int answer=65;
+	for(int i=0;i<N;i++){
+		for(int j=0;j<M;j++){
+			if(i+8<=N&&j+8<=M){
+				int tmpmin = cal(i,j);
+				if(tmpmin<answer){
+					answer=tmpmin;
 				}
 			}
 		}
 	}
-	cout<<mincnt;
+	cout<<answer;
 	return 0;
 }
