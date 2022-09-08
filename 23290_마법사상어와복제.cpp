@@ -1,26 +1,21 @@
 #include<iostream>
 #include<vector>
 using namespace std;
-struct fish{
-    int y;
-    int x;
-    int d;
-};
+vector<int> fishmap[4][4];
+vector<int> copyfishmap[4][4];
 int sharky,sharkx;
-vector<fish> fishmap[4][4];
-vector<fish> copyfishmap[4][4];
+int dy[9]={0,0,-1,-1,-1,0,1,1,1};
+int dx[9]={0,-1,-1,0,1,1,1,0,-1};
 int smellmap[4][4];
-int tmproute[3];
-int route[3];
+int dir[3];
+int tmpdir[3];
+int maxcnt= -1;
 int sy[5]={0,-1,0,1,0};
 int sx[5]={0,0,-1,0,1};
-int fy[9]={0,0,-1,-1,-1,0,1,1,1};
-int fx[9]={0,-1,-1,0,1,1,1,0,-1};
-int eatfishmax=-1;
-void copyfish(vector<fish> needcopy[4][4],vector<fish> original[4][4]){
+void copyfish(vector<int> copyf[4][4],vector<int> orif[4][4]){
     for(int i=0;i<4;i++){
         for(int j=0;j<4;j++){
-            needcopy[i][j]=original[i][j];
+            copyf[i][j]=orif[i][j];
         }
     }
 }
@@ -51,88 +46,82 @@ int changed(int d){
     }
 }
 void movefish(){
-    vector<fish> tmpfishmap[4][4];
+    vector<int> tmpfish[4][4];
     for(int i=0;i<4;i++){
         for(int j=0;j<4;j++){
-            for(int k=0;k<fishmap[i][j].size();k++){
-                bool check=false;
+            for(int t=0;t<fishmap[i][j].size();t++){
                 int y=i;
                 int x=j;
-                int d=fishmap[i][j][k].d;
-                int ny = y;
-                int nx = x;
-                for(int t=0;t<8;t++){
-                    ny=y+fy[d];
-                    nx=x+fx[d];
-                    if(ny>=0&&ny<4&&nx>=0&&nx<4){
-                        if((ny==sharky&&nx==sharkx)||smellmap[ny][nx]!=0){
-                            d=changed(d);
-                        }
-                        else{
-                            check=true;
-                            break;
+                int tmpd=fishmap[i][j][t];
+                bool check=false;
+                for(int d=0;d<8;d++){
+                    y=i+dy[tmpd];
+                    x=j+dx[tmpd];
+                    if(y>=0&&y<4&&x>=0&&x<4){
+                        if(smellmap[y][x]==0){
+                            if(y==sharky&&x==sharkx){
+
+                            }
+                            else{
+                                check=true;
+                                break;
+                            }
                         }
                     }
-                    else{
-                        d=changed(d);
-                    }
+                    tmpd=changed(tmpd);
                 }
                 if(check){
-                    tmpfishmap[ny][nx].push_back({ny,nx,d});
+                    tmpfish[y][x].push_back(tmpd);
                 }
                 else{
-                    tmpfishmap[y][x].push_back({y,x,d});
+                    tmpfish[i][j].push_back(fishmap[i][j][t]);
                 }
             }
         }
     }
-    for(int i=0;i<4;i++){
-        for(int j=0;j<4;j++){
-            fishmap[i][j]=tmpfishmap[i][j];
-        }
-    }
+    copyfish(fishmap,tmpfish);
 }
 int calfish(){
     bool visited[4][4]={false,};
-    int tmpsy=sharky;
-    int tmpsx=sharkx;
+    int tmpy=sharky;
+    int tmpx=sharkx;
     int result=0;
     for(int i=0;i<3;i++){
-        tmpsy=tmpsy+sy[tmproute[i]];
-        tmpsx=tmpsx+sx[tmproute[i]];
-        if(tmpsy<0||tmpsy>=4||tmpsx<0||tmpsx>=4){
+        tmpy=tmpy+sy[tmpdir[i]];
+        tmpx=tmpx+sx[tmpdir[i]];
+        if(tmpy<0||tmpy>=4||tmpx<0||tmpx>=4){
             return -1;
         }
         else{
-            if(!visited[tmpsy][tmpsx]){
-                visited[tmpsy][tmpsx]=true;
-                result=result+fishmap[tmpsy][tmpsx].size();
+            if(!visited[tmpy][tmpx]){
+                visited[tmpy][tmpx]=true;
+                result=result+fishmap[tmpy][tmpx].size();
             }
         }
     }
     return result;
 }
-void findroute(int cnt){
+void moveshark(int cnt){
     if(cnt==3){
         int tmpmax=calfish();
-        if(tmpmax>eatfishmax){
-            eatfishmax=tmpmax;
+        if(tmpmax>maxcnt){
+            maxcnt=tmpmax;
             for(int i=0;i<3;i++){
-                route[i]=tmproute[i];
+                dir[i]=tmpdir[i];
             }
         }
         return;
     }
     for(int i=1;i<=4;i++){
-        tmproute[cnt]=i;
-        findroute(cnt+1);
+        tmpdir[cnt]=i;
+        moveshark(cnt+1);
     }
 }
-void moveshark(int t){
-    findroute(0);
+void eatfish(int t){
+    moveshark(0);
     for(int i=0;i<3;i++){
-        sharky=sharky+sy[route[i]];
-        sharkx=sharkx+sx[route[i]];
+        sharky=sharky+sy[dir[i]];
+        sharkx=sharkx+sx[dir[i]];
         if(!fishmap[sharky][sharkx].empty()){
             fishmap[sharky][sharkx].clear();
             smellmap[sharky][sharkx]=t;
@@ -151,45 +140,37 @@ void deletesmell(int t){
 void domagic(){
     for(int i=0;i<4;i++){
         for(int j=0;j<4;j++){
-            for(int k=0;k<copyfishmap[i][j].size();k++){
-                fishmap[i][j].push_back(copyfishmap[i][j][k]);
+            for(int t=0;t<copyfishmap[i][j].size();t++){
+                fishmap[i][j].push_back(copyfishmap[i][j][t]);
             }
         }
     }
 }
-void init(){
-    for(int i=0;i<3;i++){
-        tmproute[i]=0;
-    }
-}
 int main(void){
-    int fishnum;
-    int magicnum;
+    int fishnum, magicnum;
     cin>>fishnum>>magicnum;
     for(int i=0;i<fishnum;i++){
-        int y,x,d;
-        cin>>y>>x>>d;
-        fish f={y-1,x-1,d};
-        fishmap[y-1][x-1].push_back(f);
+        int tmpy,tmpx,tmpd;
+        cin>>tmpy>>tmpx>>tmpd;
+        fishmap[tmpy-1][tmpx-1].push_back(tmpd);
     }
     cin>>sharky>>sharkx;
     sharky--;
     sharkx--;
     for(int i=1;i<=magicnum;i++){
+        maxcnt=-1;
         copyfish(copyfishmap,fishmap);
-        eatfishmax=-1;
-        init();
         movefish();
-        moveshark(i);
+        eatfish(i);
         deletesmell(i);
         domagic();
     }
-    int answer=0;
+    int result=0;
     for(int i=0;i<4;i++){
         for(int j=0;j<4;j++){
-            answer=answer+fishmap[i][j].size();
+            result=result+fishmap[i][j].size();
         }
     }
-    cout<<answer;
+    cout<<result;
     return 0;
 }
