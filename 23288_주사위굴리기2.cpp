@@ -1,130 +1,103 @@
 #include<iostream>
+#include<queue>
 using namespace std;
-int N,M;
 int gamemap[20][20];
-int dice[4][3];
+int dicenum[4][3];
+int dicecnt;
+int N,M;
 int dy[4]={0,1,0,-1};
 int dx[4]={1,0,-1,0};
-int score;
-int starty,startx;
-int cnt;
-bool visited[20][20];
-void Init(){
-    for(int i=0;i<N;i++){
-        for(int j=0;j<M;j++){
-            visited[i][j]=false;
-        }
+int starty, startx;
+int score=0;
+void movedice(int d){
+    if(d==0){
+        int tmp=dicenum[1][0];
+        dicenum[1][0]=dicenum[3][1];
+        dicenum[3][1]=dicenum[1][2];
+        dicenum[1][2]=dicenum[1][1];
+        dicenum[1][1]=tmp;
+    }
+    else if(d==1){
+        int tmp=dicenum[0][1];
+        dicenum[0][1]=dicenum[3][1];
+        dicenum[3][1]=dicenum[2][1];
+        dicenum[2][1]=dicenum[1][1];
+        dicenum[1][1]=tmp;
+    }
+    else if(d==2){
+        int tmp=dicenum[1][0];
+        dicenum[1][0]=dicenum[1][1];
+        dicenum[1][1]=dicenum[1][2];
+        dicenum[1][2]=dicenum[3][1];
+        dicenum[3][1]=tmp;
+    }
+    else{
+        int tmp=dicenum[0][1];
+        dicenum[0][1]=dicenum[1][1];
+        dicenum[1][1]=dicenum[2][1];
+        dicenum[2][1]=dicenum[3][1];
+        dicenum[3][1]=tmp;
     }
 }
-void DFS(int x,int y){
-    for(int i=0;i<4;i++){
-        int ny=y+dy[i];
-        int nx=x+dx[i];
-        if(ny>=0&&ny<N&&nx>=0&&nx<M){
-            if(!visited[ny][nx]&&gamemap[ny][nx]==gamemap[starty][startx]){
-                visited[ny][nx]=true;
-                cnt++;
-                DFS(nx,ny);
+int calscore(int dir){
+    if(dicenum[3][1]>gamemap[starty][startx]){
+        dir=(dir+1)%4;
+    }
+    else if(dicenum[3][1]<gamemap[starty][startx]){
+        dir=(dir+3)%4;
+    }
+    bool visited[20][20]={false,};
+    queue<pair<int,int>> q;
+    q.push({starty,startx});
+    int cnt=1;
+    int basescore=gamemap[starty][startx];
+    visited[starty][startx]=true;
+    while(!q.empty()){
+        int y=q.front().first;
+        int x=q.front().second;
+        q.pop();
+        for(int d=0;d<4;d++){
+            int ny=y+dy[d];
+            int nx=x+dx[d];
+            if(ny>=0&&ny<N&&nx>=0&&nx<M){
+                if(!visited[ny][nx]&&gamemap[ny][nx]==basescore){
+                    visited[ny][nx]=true;
+                    cnt++;
+                    q.push({ny,nx});
+                }
             }
         }
     }
-}
-void calscore(){
-    cnt=1;
-    Init();
-    visited[starty][startx]=true;
-    DFS(startx,starty);
-    score=score+cnt*gamemap[starty][startx];
-}
-int rolldice(int d){
-    //동
-    if(d==0){
-        int tmpd=dice[1][1];
-        dice[1][1]=dice[1][0];
-        dice[1][0]=dice[3][1];
-        dice[3][1]=dice[1][2];
-        dice[1][2]=tmpd;
-    }
-    //남
-    else if(d==1){
-        int tmpd=dice[1][1];
-        dice[1][1]=dice[0][1];
-        dice[0][1]=dice[3][1];
-        dice[3][1]=dice[2][1];
-        dice[2][1]=tmpd;
-    }
-    //서
-    else if(d==2){
-        int tmpd=dice[1][1];
-        dice[1][1]=dice[1][2];
-        dice[1][2]=dice[3][1];
-        dice[3][1]=dice[1][0];
-        dice[1][0]=tmpd;
-    }
-    //북
-    else{
-        int tmpd=dice[1][1];
-        dice[1][1]=dice[2][1];
-        dice[2][1]=dice[3][1];
-        dice[3][1]=dice[0][1];
-        dice[0][1]=tmpd;
-    }
-    return dice[3][1];
-}
-int move(int x, int y,int d){
-    bool check = false;
-    int ny=y;
-    int nx=x;
-    while(!check){
-        ny=y+dy[d];
-        nx=x+dx[d];
-        if(ny>=0&&ny<N&&nx>=0&&nx<M){
-            check=true;
-        }
-        else{
-            d=d+2;
-            d=d%4;
-            check=false;
-        }
-    }
-    int A = rolldice(d);
-    int B = gamemap[ny][nx];
-    starty=ny;
-    startx=nx;
-    if(A>B){
-        d++;
-        d=d%4;
-        return d;
-    }
-    else if(A<B){
-        d=d+3;
-        d=d%4;
-        return d;
-    }
-    else{
-        return d;
-    }
+    score=score+cnt*basescore;
+    return dir;
 }
 int main(void){
-    int K;
-    cin>>N>>M>>K;
+    cin>>N>>M>>dicecnt;
     for(int i=0;i<N;i++){
         for(int j=0;j<M;j++){
             cin>>gamemap[i][j];
         }
     }
-    dice[0][1]=2;
-    dice[1][0]=4;
-    dice[1][1]=1;
-    dice[1][2]=3;
-    dice[2][1]=5;
-    dice[3][1]=6;
-    starty=0;
-    startx=0;
-    int d=0;
-    for(int i=0;i<K;i++){
-        d=move(startx,starty,d);
-        calscore();
+    dicenum[0][1]=2;
+    dicenum[1][0]=4;
+    dicenum[1][1]=1;
+    dicenum[1][2]=3;
+    dicenum[2][1]=5;
+    dicenum[3][1]=6;
+    int dir=0;
+    for(int i=0;i<dicecnt;i++){
+        int ny=starty+dy[dir];
+        int nx=startx+dx[dir];
+        if(ny>=0&&ny<N&&nx>=0&&nx<M){
+            movedice(dir);
+        }
+        else{
+            dir=(dir+2)%4;
+            movedice(dir);
+        }
+        starty=starty+dy[dir];
+        startx=startx+dx[dir];
+        dir=calscore(dir);
     }
     cout<<score;
     return 0;
