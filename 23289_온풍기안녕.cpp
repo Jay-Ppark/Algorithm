@@ -32,7 +32,7 @@ bool checkwall(int y,int x,int ny,int nx,int d,int i){
     }
     else if(d==1){
         if(i==0){
-            if(!wallmap[y][x][1]&&!wallmap[ny][nx][0]){
+            if(!wallmap[y][x][2]&&!wallmap[ny][nx][3]){
                 return true;
             }
         }
@@ -42,14 +42,14 @@ bool checkwall(int y,int x,int ny,int nx,int d,int i){
             }
         }
         else{
-            if(!wallmap[y][x]&&!wallmap[ny][nx][2]){
+            if(!wallmap[y][x][0]&&!wallmap[ny][nx][3]){
                 return true;
             }
         }
     }
     else if(d==2){
         if(i==0){
-            if(!wallmap[y][x][2]&&!wallmap[ny][nx][1]){
+            if(!wallmap[y][x][3]&&!wallmap[ny][nx][0]){
                 return true;
             }
         }
@@ -59,14 +59,14 @@ bool checkwall(int y,int x,int ny,int nx,int d,int i){
             }
         }
         else{
-            if(!wallmap[y][x][2]&&!wallmap[ny][nx][3]){
+            if(!wallmap[y][x][1]&&!wallmap[ny][nx][0]){
                 return true;
             }
         }
     }
     else{
         if(i==0){
-            if(!wallmap[y][x][3]&&!wallmap[ny][nx][0]){
+            if(!wallmap[y][x][2]&&!wallmap[ny][nx][1]){
                 return true;
             }
         }
@@ -76,7 +76,7 @@ bool checkwall(int y,int x,int ny,int nx,int d,int i){
             }
         }
         else{
-            if(!wallmap[y][x][3]&&!wallmap[ny][nx][2]){
+            if(!wallmap[y][x][0]&&!wallmap[ny][nx][1]){
                 return true;
             }
         }
@@ -85,13 +85,13 @@ bool checkwall(int y,int x,int ny,int nx,int d,int i){
 }
 void spreadwind(int y,int x,int d){
     bool visited[20][20]={false,};
-    int ny=y+dy[d];
-    int nx=x+dx[d];
-    if(ny<0||ny>=h||nx<0||nx>=w){
+    y=y+dy[d];
+    x=x+dx[d];
+    if(y<0||y>=h||x<0||x>=w){
         return;
     }
     queue<pair<pair<int,int>,int>> q;
-    q.push({{ny,nx},5});
+    q.push({{y,x},5});
     while(!q.empty()){
         int y=q.front().first.first;
         int x=q.front().first.second;
@@ -123,65 +123,25 @@ void doheat(){
 }
 void adjusttemp(){
     int tmpheat[20][20]={0,};
-    for(int i=0;i<h;i++){
-        for(int j=0;j<w;j++){
-            if(i==h-1&&j==w-1){
-                continue;
-            }
-            else if(i==h-1&&!wallmap[i][j][0]){
-                int a=tempmap[i][j];
-                int b=tempmap[i][j+1];
-                if(a>=b){
-                    int diff=(a-b)/4;
-                    tmpheat[i][j]=tmpheat[i][j]-diff;
-                    tmpheat[i][j+1]=tmpheat[i][j+1]+diff;
-                }
-                else{
-                    int diff=(b-a)/4;
-                    tmpheat[i][j]=tmpheat[i][j]+diff;
-                    tmpheat[i][j+1]=tmpheat[i][j+1]-diff;
-                }
-            }
-            else if(j==w-1&&!wallmap[i][j][1]){
-                int a=tempmap[i][j];
-                int b=tempmap[i+1][j];
-                if(a>=b){
-                    int diff=(a-b)/4;
-                    tmpheat[i][j]=tmpheat[i][j]-diff;
-                    tmpheat[i+1][j]=tmpheat[i+1][j]+diff;
-                }
-                else{
-                    int diff=(b-a)/4;
-                    tmpheat[i][j]=tmpheat[i][j]+diff;
-                    tmpheat[i+1][j]=tmpheat[i+1][j]-diff;
-                }
-            }
-            else{
-                int a=tempmap[i][j];
-                int b=tempmap[i][j+1];
-                int c=tempmap[i+1][j];
-                if(!wallmap[i][j][0]){
-                    if(a>=b){
-                        int diff=(a-b)/4;
-                        tmpheat[i][j]=tmpheat[i][j]-diff;
-                        tmpheat[i][j+1]=tmpheat[i][j+1]+diff;
-                    }
-                    else{
-                        int diff=(b-a)/4;
-                        tmpheat[i][j]=tmpheat[i][j]+diff;
-                        tmpheat[i][j+1]=tmpheat[i][j+1]-diff;
-                    }
-                }
-                if(!wallmap[i][j][1]){
-                    if(a>=c){
-                        int diff=(a-c)/4;
-                        tmpheat[i][j]=tmpheat[i][j]-diff;
-                        tmpheat[i+1][j]=tmpheat[i+1][j]+diff;
-                    }
-                    else{
-                        int diff=(c-a)/4;
-                        tmpheat[i][j]=tmpheat[i][j]+diff;
-                        tmpheat[i+1][j]=tmpheat[i+1][j]-diff;
+    for(int y=0;y<h;y++){
+        for(int x=0;x<w;x++){
+            for(int i=0;i<2;i++){
+                int ny=y+dy[i];
+                int nx=x+dx[i];
+                if(ny>=0&&ny<h&&nx>=0&&nx<w){
+                    if(!wallmap[y][x][i]){
+                        int a=tempmap[y][x];
+                        int b=tempmap[ny][nx];
+                        if(a>=b){
+                            int diff=(a-b)/4;
+                            tmpheat[y][x]=tmpheat[y][x]-diff;
+                            tmpheat[ny][nx]=tmpheat[ny][nx]+diff;
+                        }
+                        else{
+                            int diff=(b-a)/4;
+                            tmpheat[y][x]=tmpheat[y][x]+diff;
+                            tmpheat[ny][nx]=tmpheat[ny][nx]-diff;
+                        }
                     }
                 }
             }
@@ -202,7 +162,7 @@ void decreasetemp(){
             tempmap[h-1][i]--;
         }
     }
-    for(int i=0;i<h;i++){
+    for(int i=1;i<h-1;i++){
         if(tempmap[i][0]>=1){
             tempmap[i][0]--;
         }
@@ -243,6 +203,7 @@ int main(void){
                     }
                 }
             }
+            tempmap[i][j]=0;
         }
     }
     int wallnum;
