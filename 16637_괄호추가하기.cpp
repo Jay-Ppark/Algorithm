@@ -1,22 +1,23 @@
 #include<iostream>
 #include<string>
 using namespace std;
+int N;
+string s;
 int num[10];
-char op[9];
+char oper[9];
 int main(void){
-    int N;
     cin>>N;
-    string form;
-    cin>>form;
-    for(int i=0;i<N;i++){
+    cin>>s;
+    int numindex=0;
+    int operindex=0;
+    for(int i=0;i<s.length();i++){
         if(i%2==0){
-            num[i]=form[i]-48;
+            oper[operindex]=s[i];
+            operindex++;
         }
         else{
-            op[i]=form[i];
+            num[numindex]=atoi(s[i]);
         }
     }
-    
     return 0;
 }
-//최대 괄호 개수 : 숫자 / 2
