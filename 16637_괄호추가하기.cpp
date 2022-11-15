@@ -12,7 +12,7 @@ int main(void){
     int operindex=0;
     for(int i=0;i<s.length();i++){
         if(i%2==0){
-            oper[operindex]=s[i];
+            oper[operindex]=s[i];    
             operindex++;
         }
         else{
