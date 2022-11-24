@@ -1,16 +1,19 @@
 #include<iostream>
+#include<vector>
 #include<algorithm>
 using namespace std;
-int arr[1000];
+int N;
+vector<int> v;
 int main(void){
-	int N;
 	cin>>N;
 	for(int i=0;i<N;i++){
-		cin>>arr[i];
+		int tmp;
+		cin>>tmp;
+		v.push_back(tmp);
 	}
-	sort(arr,arr+N);
-	for(int i=0;i<N;i++){
-		cout<<arr[i]<<'\n';
+	sort(v.begin(),v.end());
+	for(int i=0;i<v.size();i++){
+		cout<<v[i]<<'\n';
 	}
 	return 0;
 }

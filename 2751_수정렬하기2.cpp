@@ -1,21 +1,18 @@
 #include<iostream>
-#include<queue>
-#include<functional>
 using namespace std;
-priority_queue<int, vector<int>, greater<int>> pq;
+bool visited[2000001];
 int main(void){
-    ios::sync_with_stdio(false);
-	cin.tie(NULL);
     int N;
     cin>>N;
     for(int i=0;i<N;i++){
         int tmp;
         cin>>tmp;
-        pq.push(tmp);
+        visited[tmp+1000000]=true;
     }
-    while(!pq.empty()){
-        cout<<pq.top()<<'\n';
-        pq.pop();
+    for(int i=0;i<=2000000;i++){
+        if(visited[i]){
+            cout<<i-1000000<<"\n";
+        }
     }
     return 0;
 }
