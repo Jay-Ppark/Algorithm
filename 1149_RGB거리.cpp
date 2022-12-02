@@ -1,24 +1,23 @@
 #include<iostream>
-#include<algorithm>
 using namespace std;
-int house[1000][3];
-int dp[1000][3];
 int N;
-int main(void) {
-	cin >> N;
-	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < 3; j++) {
-			cin >> house[i][j];
-		}
+int red[1000];
+int green[1000];
+int blue[1000];
+int house[3][1000];
+int main(void){
+	cin>>N;
+	for(int i=0;i<N;i++){
+		cin>>red[i]>>green[i]>>blue[i];
 	}
-	dp[0][0] = house[0][0];
-	dp[0][1] = house[0][1];
-	dp[0][2] = house[0][2];
-	for (int i = 1; i < N; i++) {
-		dp[i][0] = house[i][0] + min(dp[i - 1][1], dp[i - 1][2]);
-		dp[i][1] = house[i][1] + min(dp[i - 1][0], dp[i - 1][2]);
-		dp[i][2] = house[i][2] + min(dp[i - 1][0], dp[i - 1][1]);
+	house[0][0]=red[0];
+	house[1][0]=green[0];
+	house[2][0]=blue[0];
+	for(int i=1;i<N;i++){
+		house[0][i]=red[i]+min(house[1][i-1],house[2][i-1]);
+		house[1][i]=green[i]+min(house[0][i-1],house[2][i-1]);
+		house[2][i]=blue[i]+min(house[0][i-1],house[1][i-1]);
 	}
-	cout << min(min(dp[N-1][0], dp[N-1][1]), dp[N-1][2]);
+	cout<<min(house[2][N-1],min(house[0][N-1],house[1][N-1]));
 	return 0;
 }
