@@ -1,23 +1,15 @@
 #include<iostream>
 using namespace std;
 int dp[1001];
-int main(void)
-{
-	dp[1] = 1;
-	dp[2] = 3;
-	for (int i = 3; i <= 1000; i++)
-	{
-		if (i % 2 == 0)
-		{
-			dp[i] = (2 * dp[i - 1] + 1) % 10007;
-		}
-		else
-		{
-			dp[i] = (2 * dp[i - 1] - 1) % 10007;
-		}
-	}
+int main(void){
 	int n;
-	cin >> n;
-	cout << dp[n];
+	cin>>n;
+	dp[1]=1;
+	dp[2]=3;
+	for(int i=3;i<=n;i++){
+		dp[i]=dp[i-1]+dp[i-2]*2;
+		dp[i]=dp[i]%10007;
+	}
+	cout<<dp[n];
 	return 0;
 }

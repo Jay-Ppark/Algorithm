@@ -3,55 +3,58 @@
 #include<algorithm>
 #include<queue>
 using namespace std;
-bool visited[1001];
 vector<int> v[1001];
-void DFS(int vertex){
-	visited[vertex]=true;
-	cout<<vertex<<" ";
-	for(int i=0;i<v[vertex].size();i++){
-		if(!visited[v[vertex][i]]){
-			DFS(v[vertex][i]);
+bool visited[1001];
+int N;
+int startN;
+void DFS(int s){
+	cout<<s<<" ";
+	visited[s]=true;
+	for(int i=0;i<v[s].size();i++){
+		if(!visited[v[s][i]]){
+			DFS(v[s][i]);
 		}
 	}
 }
-void Init(){
-	for(int i=0;i<1001;i++){
+void init(){
+	for(int i=1;i<=N;i++){
 		visited[i]=false;
 	}
 }
-void BFS(int vertex){
+void BFS(){
 	queue<int> q;
-	q.push(vertex);
-	visited[vertex]=true;
+	q.push(startN);
+	visited[startN]=true;
 	while(!q.empty()){
-		int tmp = q.front();
+		int topq=q.front();
 		q.pop();
-		cout<<tmp<<" ";
-		for(int i=0;i<v[tmp].size();i++){
-			if(!visited[v[tmp][i]]){
-				q.push(v[tmp][i]);
-				visited[v[tmp][i]]=true;
+		cout<<topq<<" ";
+		for(int i=0;i<v[topq].size();i++){
+			if(!visited[v[topq][i]]){
+				q.push(v[topq][i]);
+				visited[v[topq][i]]=true;
 			}
 		}
 	}
 }
 int main(void){
-	int N,M,startv;
-	cin>>N>>M>>startv;
+	cin>>N;
+	int M;
+	cin>>M>>startN;
 	for(int i=0;i<M;i++){
-		int sv,ev;
-		cin>>sv>>ev;
-		v[sv].push_back(ev);
-		v[ev].push_back(sv);
+		int tmps,tmpe;
+		cin>>tmps>>tmpe;
+		v[tmps].push_back(tmpe);
+		v[tmpe].push_back(tmps);
 	}
 	for(int i=1;i<=N;i++){
 		if(!v[i].empty()){
 			sort(v[i].begin(),v[i].end());
 		}
 	}
-	DFS(startv);
+	DFS(startN);
+	init();
 	cout<<'\n';
-	Init();
-	BFS(startv);
+	BFS();
 	return 0;
 }

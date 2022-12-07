@@ -1,60 +1,81 @@
 #include<iostream>
-#include<string>
 using namespace std;
-char boardgame[50][50];
-string wstart="WBWBWBWB";
-string bstart="BWBWBWBW";
-int cal(int N,int M){
-	int wdiff=0;
-	int bdiff=0;
-	for(int i=N;i<N+8;i++){
-		int index=0;
-		for(int j=M;j<M+8;j++){
+char board[50][50];
+int calboard(int h,int w){
+	int whitestart=0;
+	int blackstart=0;
+	for(int i=h;i<h+8;i++){
+		for(int j=w;j<w+8;j++){
 			if(i%2==0){
-				if(wstart[index]!=boardgame[i][j]){
-					wdiff++;
+				if(j%2==0){
+					//W인경우
+					if(board[i][j]!='W'){
+						whitestart++;
+					}
+					//B인경우
+					else{
+						blackstart++;
+					}
 				}
-				if(bstart[index]!=boardgame[i][j]){
-					bdiff++;
+				else{
+					if(board[i][j]!='B'){
+						whitestart++;
+					}
+					else{
+						blackstart++;
+					}
 				}
 			}
 			else{
-				if(bstart[index]!=boardgame[i][j]){
-					wdiff++;
+				if(j%2==0){
+					//W인경우
+					if(board[i][j]!='B'){
+						whitestart++;
+					}
+					//B인경우
+					else{
+						blackstart++;
+					}
 				}
-				if(wstart[index]!=boardgame[i][j]){
-					bdiff++;
+				else{
+					if(board[i][j]!='W'){
+						whitestart++;
+					}
+					else{
+						blackstart++;
+					}
 				}
 			}
-			index++;
 		}
 	}
-	if(wdiff<bdiff){
-		return wdiff;
+	if(whitestart<=blackstart){
+		return whitestart;
 	}
 	else{
-		return bdiff;
+		return blackstart;
 	}
 }
 int main(void){
-	int N,M;
-	cin>>N>>M;
-	for(int i=0;i<N;i++){
-		for(int j=0;j<M;j++){
-			cin>>boardgame[i][j];
+	int h,w;
+	cin>>h>>w;
+	for(int i=0;i<h;i++){
+		for(int j=0;j<w;j++){
+			cin>>board[i][j];
 		}
 	}
-	int answer=65;
-	for(int i=0;i<N;i++){
-		for(int j=0;j<M;j++){
-			if(i+8<=N&&j+8<=M){
-				int tmpmin = cal(i,j);
-				if(tmpmin<answer){
-					answer=tmpmin;
+	int maxans=1000;
+	for(int i=0;i<h;i++){
+		for(int j=0;j<w;j++){
+			if(w-j>=8){
+				if(h-i>=8){
+					int tmp=calboard(i,j);
+					if(tmp<maxans){
+						maxans=tmp;
+					}
 				}
 			}
 		}
 	}
-	cout<<answer;
+	cout<<maxans;
 	return 0;
 }
