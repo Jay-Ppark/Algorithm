@@ -1,61 +1,60 @@
 #include<iostream>
 #include<queue>
 using namespace std;
-int gamesize;
 bool visited[300][300];
-int starty, startx;
-int endy, endx;
-int cnt;
-int dy[8] = { 1,2,2,1,-1,-2,-2,-1 };
-int dx[8] = { -2,-1,1,2,2,1,-1,-2 };
-void init() {
-	for (int i = 0; i < 300; i++) {
-		for (int j = 0; j < 300; j++) {
-			visited[i][j] = false;
+int l;
+int endy,endx;
+int dy[8]={1,2,2,1,-1,-2,-2,-1};
+int dx[8]={-2,-1,1,2,2,1,-1,-2};
+void init(){
+	for(int i=0;i<l;i++){
+		for(int j=0;j<l;j++){
+			visited[i][j]=false;
 		}
 	}
 }
-void BFS() {
-	cnt = 0;
-	queue<pair<int, int>> q;
-	q.push({ starty, startx });
-	visited[starty][startx] = true;
-	while (!q.empty()) {
-		int qsize = q.size();
-		for (int k = 0; k < qsize; k++) {
-			int tmpy = q.front().first;
-			int tmpx = q.front().second;
+int BFS(int yy,int xx){
+	queue<pair<int,int>> q;
+	q.push({yy,xx});
+	visited[yy][xx]=true;
+	int cnt=-1;
+	while(!q.empty()){
+		int qsize=q.size();
+		for(int qs=0;qs<qsize;qs++){
+			int y=q.front().first;
+			int x=q.front().second;
 			q.pop();
-			if (tmpy == endy && tmpx == endx) {
-				return;
+			if(y==endy&&x==endx){
+				while(!q.empty()){
+					q.pop();
+				}
+				break;
 			}
-			for (int i = 0; i < 8; i++) {
-				int ttmpy = tmpy + dy[i];
-				int ttmpx = tmpx + dx[i];
-				if (ttmpy >= 0 && ttmpy < gamesize && ttmpx >= 0 && ttmpx < gamesize && !visited[ttmpy][ttmpx]) {
-					visited[ttmpy][ttmpx] = true;
-					q.push({ ttmpy,ttmpx });
+			for(int d=0;d<8;d++){
+				int ny=y+dy[d];
+				int nx=x+dx[d];
+				if(ny>=0&&ny<l&&nx>=0&&nx<l){
+					if(!visited[ny][nx]){
+						q.push({ny,nx});
+						visited[ny][nx]=true;
+					}
 				}
 			}
 		}
 		cnt++;
 	}
+	return cnt;
 }
-int main(void) {
+int main(void){
 	int testcase;
-	cin >> testcase;
-	for (int i = 0; i < testcase; i++) {
-		cin >> gamesize;
-		cin >> starty >> startx;
-		cin >> endy >> endx;
-		if (startx == endx && starty == endy) {
-			cout << 0 << '\n';
-		}
-		else {
-			BFS();
-			cout << cnt << '\n';
-		}
+	cin>>testcase;
+	for(int t=0;t<testcase;t++){
+		cin>>l;
+		int starty,startx;
+		cin>>starty>>startx;
+		cin>>endy>>endx;
+		int answer=BFS(starty,startx);
+		cout<<answer<<'\n';
 		init();
 	}
-	return 0;
 }

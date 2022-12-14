@@ -1,55 +1,76 @@
 #include<iostream>
-#include<vector>
+#include<queue>
 using namespace std;
-int grd[100][100];
-bool visited[100][100];
 int N;
-int dy[4] = { -1,1,0,0 };
-int dx[4] = { 0,0,-1,1 };
-int maxcnt;
-int cnt;
-void init()
-{
-	for (int i = 0; i < 100; i++) {
-		for (int j = 0; j < 100; j++) {
-			visited[i][j] = false;
+int bulidingmap[100][100];
+bool visited[100][100];
+int maxanswer=1;
+int dy[4]={-1,0,1,0};
+int dx[4]={0,-1,0,1};
+void rain(){
+	for(int i=0;i<N;i++){
+		for(int j=0;j<N;j++){
+			bulidingmap[i][j]--;
 		}
 	}
 }
-void DFS(int y, int x,int height) {
-	visited[y][x] = true;
-	for (int i = 0; i < 4; i++) {
-		int tmpy = y + dy[i];
-		int tmpx = x + dx[i];
-		if (tmpy >= 0 && tmpy < N && tmpx >= 0 && tmpx < N && !visited[tmpy][tmpx]) {
-			if (grd[tmpy][tmpx] >= height) {
-				DFS(tmpy, tmpx, height);
-			}
+void init(){
+	for(int i=0;i<N;i++){
+		for(int j=0;j<N;j++){
+			visited[i][j]=false;
 		}
 	}
 }
-int main(void) {
-	cin >> N;
-	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < N; j++) {
-			cin >> grd[i][j];
-		}
-	}
-	for (int k = 1; k <= 100; k++) {
-		cnt = 0;
-		init();
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < N; j++) {
-				if (!visited[i][j] && grd[i][j] >= k) {
-					DFS(i, j, k);
-					cnt++;
+void BFS(int yy,int xx){
+	queue<pair<int,int>> q;
+	q.push({yy,xx});
+	visited[yy][xx]=true;
+	while(!q.empty()){
+		int y=q.front().first;
+		int x=q.front().second;
+		q.pop();
+		for(int d=0;d<4;d++){
+			int ny=y+dy[d];
+			int nx=x+dx[d];
+			if(ny>=0&&ny<N&&nx>=0&&nx<N){
+				if(bulidingmap[ny][nx]>0&&!visited[ny][nx]){
+					visited[ny][nx]=true;
+					q.push({ny,nx});
 				}
 			}
 		}
-		if (maxcnt < cnt) {
-			maxcnt = cnt;
+	}
+}
+int calzone(){
+	int cnt=0;
+	for(int i=0;i<N;i++){
+		for(int j=0;j<N;j++){
+			if(bulidingmap[i][j]>0&&!visited[i][j]){
+				BFS(i,j);
+				cnt++;
+			}
 		}
 	}
-	cout << maxcnt;
+	return cnt;
+}
+int main(void){
+	cin>>N;
+	for(int i=0;i<N;i++){
+		for(int j=0;j<N;j++){
+			cin>>bulidingmap[i][j];
+		}
+	}
+	for(int i=0;i<101;i++){
+		rain();
+		init();
+		int tmpmax=calzone();
+		if(tmpmax>maxanswer){
+			maxanswer=tmpmax;
+		}
+		if(tmpmax==0){
+			break;
+		}
+	}
+	cout<<maxanswer;
 	return 0;
 }

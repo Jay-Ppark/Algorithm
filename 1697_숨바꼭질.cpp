@@ -2,39 +2,43 @@
 #include<queue>
 using namespace std;
 bool visited[100001];
-queue<int> q;
-int startp, endp;
-int cnt;
-void BFS() {
-	while (!q.empty()) {
-		int qsize = q.size();
-		for (int i = 0; i < qsize; i++) {
-			int tmp = q.front();
+int N,K;
+int dx[3]={-1,1,2};
+int main(void){
+	cin>>N>>K;
+	queue<int> q;
+	q.push(N);
+	visited[N]=true;
+	int cnt=-1;
+	while(!q.empty()){
+		int qsize=q.size();
+		for(int qs=0;qs<qsize;qs++){
+			int x=q.front();
 			q.pop();
-			if (tmp == endp) {
-				return;
+			if(x==K){
+				while(!q.empty()){
+					q.pop();
+				}
+				break;
 			}
-			if (tmp - 1 >= 0 && !visited[tmp-1]) {
-				q.push(tmp - 1);
-				visited[tmp - 1] = true;
-			}
-			if (tmp + 1 <= 100000 && !visited[tmp+1]) {
-				q.push(tmp + 1);
-				visited[tmp + 1] = true;
-			}
-			if (tmp * 2 >= 0 && tmp * 2 <= 100000 && !visited[tmp*2]) {
-				q.push(tmp * 2);
-				visited[tmp * 2];
+			for(int d=0;d<3;d++){
+				int nx=0;
+				if(d==2){
+					nx=x*dx[2];
+				}
+				else{
+					nx=x+dx[d];
+				}
+				if(nx>=0&&nx<=100000){
+					if(!visited[nx]){
+						q.push(nx);
+						visited[nx]=true;
+					}
+				}
 			}
 		}
 		cnt++;
 	}
-}
-int main(void) {
-	cin >> startp >> endp;
-	q.push(startp);
-	visited[startp] = true;
-	BFS();
-	cout << cnt;
+	cout<<cnt;
 	return 0;
 }
