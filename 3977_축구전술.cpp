@@ -1,20 +1,21 @@
 #include<iostream>
-#include<vector>
 #include<stack>
-#define MAX 100001 
+#include<vector>
+#include<algorithm>
+#define MAX 100001
 using namespace std;
 int N,M;
 vector<int> v[MAX];
 vector<vector<int> > SCC;
 bool finished[MAX];
 int d[MAX];
-int id=1;
-stack<int> s;
 int group[MAX];
 bool inDegree[MAX];
+int id=1;
+stack<int> s;
 void init(){
-    SCC.clear();
     id=1;
+    SCC.clear();
     for(int i=0;i<MAX;i++){
         v[i].clear();
         finished[i]=false;
@@ -37,7 +38,7 @@ int dfs(int x){
             parent=min(parent,d[y]);
         }
     }
-    if(parent==d[x]){
+    if(d[x]==parent){
         vector<int> tmpscc;
         while(true){
             int t=s.top();
@@ -62,7 +63,7 @@ int main(void){
         for(int i=0;i<M;i++){
             int s,e;
             cin>>s>>e;
-            v[s].push_back(e);
+            v[s+1].push_back(e+1);
         }
         for(int i=1;i<=N;i++){
             if(d[i]==0){
@@ -77,13 +78,26 @@ int main(void){
                 }
             }
         }
-        int answer=0;
+        int count=0;
+        vector<int> result;
         for(int i=1;i<=SCC.size();i++){
             if(!inDegree[i]){
-                answer++;
+                count++;
+                for(int j=0;j<SCC[i-1].size();j++){
+                    result.push_back(SCC[i-1][j]-1);
+                }
             }
         }
-        cout<<answer<<'\n';
+        if(count!=1){
+            cout<<"Confused\n\n";
+        }
+        else{
+            sort(result.begin(),result.end());
+            for(int i=0;i<result.size();i++){
+                cout<<result[i]<<"\n";
+            }
+            cout<<'\n';
+        }
     }
     return 0;
 }
