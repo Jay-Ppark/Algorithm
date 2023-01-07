@@ -1,188 +1,164 @@
 #include<iostream>
 #include<vector>
 using namespace std;
-//{{ y, x }, cctv_num }
-vector <pair<pair<int, int>, int >> cctv;
+int N,M;
+int zone[8][8];
+vector<pair<pair<int,int>,int>> cctv;
 vector<int> angle;
-int height, width;
-int arr[8][8];
 bool visited[8][8];
-bool tmpvisited[8][8];
-int minresult = 1000000;
-void watch(int angledir, int y, int x) {
-	//right
-	if (angledir == 0) {
-		for (int i = x; i < width; i++) {
-			if (arr[y][i] == 6) {
+int dy[4]={-1,0,1,0};
+int dx[4]={0,1,0,-1};
+int minanswer=100;
+void watch(int y,int x,int d){
+	if(d==0){
+		for(int i=y-1;i>=0;i--){
+			if(zone[i][x]==6){
 				break;
 			}
-			if (!tmpvisited[y][i]) {
-				tmpvisited[y][i] = true;
+			else if(zone[i][x]==0&&!visited[i][x]){
+				visited[i][x]=true;
 			}
 		}
 	}
-	//down
-	else if (angledir == 1) {
-		for (int i = y; i < height; i++) {
-			if (arr[i][x] == 6) {
+	else if(d==1){
+		for(int i=x+1;i<M;i++){
+			if(zone[y][i]==6){
 				break;
 			}
-			if (!tmpvisited[i][x]) {
-				tmpvisited[i][x] = true;
+			else if(zone[y][i]==0&&!visited[y][i]){
+				visited[y][i]=true;
 			}
 		}
 	}
-	//left
-	else if (angledir == 2) {
-		for (int i = x; i >= 0; i--) {
-			if (arr[y][i] == 6) {
+	else if(d==2){
+		for(int i=y+1;i<N;i++){
+			if(zone[i][x]==6){
 				break;
 			}
-			if (!tmpvisited[y][i]) {
-				tmpvisited[y][i] = true;
+			else if(zone[i][x]==0&&!visited[i][x]){
+				visited[i][x]=true;
 			}
 		}
 	}
-	//up
-	else if (angledir == 3) {
-		for (int i = y; i >= 0; i--) {
-			if (arr[i][x] == 6) {
+	else{
+		for(int i=x-1;i>=0;i--){
+			if(zone[y][i]==6){
 				break;
 			}
-			if (!tmpvisited[i][x]) {
-				tmpvisited[i][x] = true;
+			else if(zone[y][i]==0&&!visited[y][i]){
+				visited[y][i]=true;
 			}
 		}
 	}
 }
-void selectangle(int cnt) {
-	if (cnt == cctv.size()) {
-		//init tmpvisited
-		int tmpresult = 0;
-		for (int i = 0; i < height; i++) {
-			for (int j = 0; j < width; j++) {
-				tmpvisited[i][j] = visited[i][j];
+int docctv(){
+	for(int i=0;i<cctv.size();i++){
+		int y=cctv[i].first.first;
+		int x=cctv[i].first.second;
+		int t=cctv[i].second;
+		if(t==1){
+			watch(y,x,angle[i]);
+		}
+		else if(t==2){
+			if(angle[i]%2==0){
+				watch(y,x,1);
+				watch(y,x,3);
+			}
+			else{
+				watch(y,x,0);
+				watch(y,x,2);
 			}
 		}
-		for (int i = 0; i < cctv.size(); i++) {
-			//cctv1
-			//one dir
-			int tmpy = cctv[i].first.first;
-			int tmpx = cctv[i].first.second;
-			int cctvnum = cctv[i].second;
-			if (cctvnum == 1) {
-				//angle[i] 방향으로 watch
-				watch(angle[i], tmpy, tmpx);
+		else if(t==3){
+			if(angle[i]==0){
+				watch(y,x,0);
+				watch(y,x,1);
 			}
-			//left,right / up,down
-			else if (cctvnum == 2) {
-				//left,right
-				if (angle[i] % 2 == 0) {
-					watch(0, tmpy, tmpx);
-					watch(2, tmpy, tmpx);
-				}
-				//up,down
-				else {
-					watch(1, tmpy, tmpx);
-					watch(3, tmpy, tmpx);
-				}
+			else if(angle[i]==1){
+				watch(y,x,1);
+				watch(y,x,2);
 			}
-			//90 angle two dir
-			else if (cctv[i].second == 3) {
-				//0 right, 1 down, 2 left, 3 up
-				//up,right
-				if (angle[i] == 0) {
-					watch(3, tmpy, tmpx);
-					watch(0, tmpy, tmpx);
-				}
-				//right,down
-				else if (angle[i] == 1) {
-					watch(0, tmpy, tmpx);
-					watch(1, tmpy, tmpx);
-				}
-				//down,left
-				else if (angle[i] == 2) {
-					watch(1, tmpy, tmpx);
-					watch(2, tmpy, tmpx);
-				}
-				//left,up
-				else {
-					watch(2, tmpy, tmpx);
-					watch(3, tmpy, tmpx);
-				}
+			else if(angle[i]==2){
+				watch(y,x,2);
+				watch(y,x,3);
 			}
-			//three dir
-			else if (cctv[i].second == 4) {
-				//left, up, right
-				if (angle[i] == 0) {
-					watch(2, tmpy, tmpx);
-					watch(3, tmpy, tmpx);
-					watch(0, tmpy, tmpx);
-				}
-				//up, right, down
-				else if (angle[i] == 1) {
-					watch(3, tmpy, tmpx);
-					watch(0, tmpy, tmpx);
-					watch(1, tmpy, tmpx);
-				}
-				//right, down, left
-				else if (angle[i] == 2) {
-					watch(0, tmpy, tmpx);
-					watch(1, tmpy, tmpx);
-					watch(2, tmpy, tmpx);
-				}
-				//down, left, up
-				else {
-					watch(1, tmpy, tmpx);
-					watch(2, tmpy, tmpx);
-					watch(3, tmpy, tmpx);
-				}
-			}
-			//four dir
-			else {
-				watch(0, tmpy, tmpx);
-				watch(1, tmpy, tmpx);
-				watch(2, tmpy, tmpx);
-				watch(3, tmpy, tmpx);
+			else{
+				watch(y,x,3);
+				watch(y,x,0);
 			}
 		}
-		for (int i = 0; i < height; i++) {
-			for (int j = 0; j < width; j++) {
-				if (!tmpvisited[i][j]) {
-					tmpresult++;
-				}
+		else if(t==4){
+			if(angle[i]==0){
+				watch(y,x,3);
+				watch(y,x,0);
+				watch(y,x,1);
+			}
+			else if(angle[i]==1){
+				watch(y,x,0);
+				watch(y,x,1);
+				watch(y,x,2);
+			}
+			else if(angle[i]==2){
+				watch(y,x,1);
+				watch(y,x,2);
+				watch(y,x,3);
+			}
+			else{
+				watch(y,x,2);
+				watch(y,x,3);
+				watch(y,x,0);
 			}
 		}
-		if (tmpresult < minresult) {
-			minresult = tmpresult;
+		else{
+			watch(y,x,0);
+			watch(y,x,1);
+			watch(y,x,2);
+			watch(y,x,3);
 		}
+	}
+	int cnt=0;
+	for(int i=0;i<N;i++){
+		for(int j=0;j<M;j++){
+			if(zone[i][j]==0&&!visited[i][j]){
+				cnt++;
+			}
+		}
+	}
+	return cnt;
+}
+void init(){
+	for(int i=0;i<8;i++){
+		for(int j=0;j<8;j++){
+			visited[i][j]=false;
+		}
+	}
+}
+void selectangle(int cnt){
+	if(cnt==cctv.size()){
+		int tmp=docctv();
+		if(tmp<minanswer){
+			minanswer=tmp;
+		}
+		init();
 		return;
 	}
-	// 모든 각도 try
-	for (int i = 0; i < 4; i++) {
+	for(int i=0;i<4;i++){
 		angle.push_back(i);
-		selectangle(cnt + 1);
+		selectangle(cnt+1);
 		angle.pop_back();
 	}
 }
-int main(void) {
-	//가로 세로 최대 크기 입력
-	cin >> height >> width;
-	//사무실 각 칸의 정보 입력
-	for (int i = 0; i < height; i++) {
-		for (int j = 0; j < width; j++) {
-			cin >> arr[i][j];
-			//cctv일 경우 cctv vector에 추가
-			if (arr[i][j] >= 1 && arr[i][j] <= 5) {
-				cctv.push_back({ {i,j},arr[i][j] });
-				visited[i][j] = true;
-			}
-			else if (arr[i][j] == 6) {
-				visited[i][j] = true;
+int main(void){
+	cin>>N>>M;
+	for(int i=0;i<N;i++){
+		for(int j=0;j<M;j++){
+			cin>>zone[i][j];
+			if(zone[i][j]>=1&&zone[i][j]<=5){
+				cctv.push_back({{i,j},zone[i][j]});
 			}
 		}
 	}
 	selectangle(0);
-	cout << minresult;
+	cout<<minanswer;
 	return 0;
 }

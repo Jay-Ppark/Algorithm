@@ -1,146 +1,139 @@
 #include<iostream>
 using namespace std;
-int arr[100][100];
-bool visited[100];
-int N, L;
-int result;
-void garo(int y) {
-	int cur = arr[y][0];
-	for (int i = 0; i < N; i++) {
-		if (cur != arr[y][i]) {
-			//¹üÀ§°¡ ³Ñ¾î°¡´Â °æ¿ì
-			if (abs(cur - arr[y][i]) != 1) {
-				return;
-			}
-			//°æ»ç·Î ¼³Ä¡°¡´É È®ÀÎ
-			else {
-				//³»¸®¸·±æ
-				if (cur > arr[y][i]) {
-					if (i + L <= N) {
-						for (int j = i; j < i + L; j++) {
-							if (arr[y][i] == arr[y][j]) {
-								if (!visited[j]) {
-									visited[j] = true;
+int blockmap[100][100];
+int N,L;
+bool garo(int y){
+	int prev=blockmap[y][0];
+	bool visited[N]={false,};
+	for(int i=1;i<N;i++){
+		//ì°¨ê°€ 1 ì´ˆê³¼ì¸ ê²½ìš°
+		if(abs(prev-blockmap[y][i])>1){
+			return false;
+		}
+		else{
+			if(abs(prev-blockmap[y][i])==1){
+				if(prev<blockmap[y][i]){
+					if(i-L>=0){
+						for(int j=i-1;j>=i-L;j--){
+							if(prev==blockmap[y][j]){
+								if(!visited[j]){
+									visited[j]=true;
 								}
-								else {
-									return;
+								else{
+									return false;
 								}
 							}
-							else {
-								return;
+							else{
+								return false;
 							}
 						}
-						i = i + L - 1;
+						prev=blockmap[y][i];
 					}
-					else {
-						return;
+					else{
+						return false;
 					}
 				}
-				//¿À¸£¸·±æ
-				else {
-					if (i - L >= 0) {
-						for (int j = i - 1; j >= i - L; j--) {
-							if (cur == arr[y][j]) {
-								if (!visited[j]) {
-									visited[j] = true;
+				else{
+					if(i+L<=N){
+						for(int j=i;j<i+L;j++){
+							if(blockmap[y][i]==blockmap[y][j]){
+								if(!visited[j]){
+									visited[j]=true;
 								}
-								else {
-									return;
+								else{
+									return false;
 								}
 							}
-							else {
-								return;
+							else{
+								return false;
 							}
 						}
+						prev=blockmap[y][i+L-1];
+						i=i+L-1;
 					}
-					else {
-						return;
+					else{
+						return false;
 					}
 				}
 			}
 		}
-		cur = arr[y][i];
 	}
-	result++;
+	return true;
 }
-void sero(int x) {
-	int cur = arr[0][x];
-	for (int i = 0; i < N; i++) {
-		if (cur != arr[i][x]) {
-			//¹üÀ§°¡ ³Ñ¾î°¡´Â °æ¿ì
-			if (abs(cur - arr[i][x]) != 1) {
-				return;
-			}
-			//°æ»ç·Î ¼³Ä¡°¡´É È®ÀÎ
-			else {
-				//³»¸®¸·±æ
-				if (cur > arr[i][x]) {
-					if (i + L <= N) {
-						for (int j = i; j < i + L; j++) {
-							if (arr[i][x] == arr[j][x]) {
-								if (!visited[j]) {
-									visited[j] = true;
+bool sero(int x){
+	int prev=blockmap[0][x];
+	bool visited[N]={false,};
+	for(int i=1;i<N;i++){
+		//ì°¨ê°€ 1 ì´ˆê³¼ì¸ ê²½ìš°
+		if(abs(prev-blockmap[i][x])>1){
+			return false;
+		}
+		else{
+			if(abs(prev-blockmap[i][x])==1){
+				if(prev<blockmap[i][x]){
+					if(i-L>=0){
+						for(int j=i-1;j>=i-L;j--){
+							if(prev==blockmap[j][x]){
+								if(!visited[j]){
+									visited[j]=true;
 								}
-								else {
-									return;
+								else{
+									return false;
 								}
 							}
-							else {
-								return;
+							else{
+								return false;
 							}
 						}
-						i = i + L - 1;
+						prev=blockmap[i][x];
 					}
-					else {
-						return;
+					else{
+						return false;
 					}
 				}
-				//¿À¸£¸·±æ
-				else {
-					if (i - L >= 0) {
-						for (int j = i - 1; j >= i - L; j--) {
-							if (cur == arr[j][x]) {
-								if (!visited[j]) {
-									visited[j] = true;
+				else{
+					if(i+L<=N){
+						for(int j=i;j<i+L;j++){
+							if(blockmap[i][x]==blockmap[j][x]){
+								if(!visited[j]){
+									visited[j]=true;
 								}
-								else {
-									return;
+								else{
+									return false;
 								}
 							}
-							else {
-								return;
+							else{
+								return false;
 							}
 						}
+						prev=blockmap[i+L-1][x];
+						i=i+L-1;
 					}
-					else {
-						return;
+					else{
+						return false;
 					}
 				}
 			}
 		}
-		cur = arr[i][x];
 	}
-	result++;
+	return true;
 }
-void init() {
-	for (int i = 0; i < 100; i++) {
-		visited[i] = false;
-	}
-}
-int main(void) {
-	cin >> N >> L;
-	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < N; j++) {
-			cin >> arr[i][j];
+int main(void){
+	cin>>N>>L;
+	for(int i=0;i<N;i++){
+		for(int j=0;j<N;j++){
+			cin>>blockmap[i][j];
 		}
 	}
-	int temp = result;
-	for (int i = 0; i < N; i++) {
-		init();
-		garo(i);
-		init();
-		sero(i);
+	int cnt=0;
+	for(int i=0;i<N;i++){
+		if(garo(i)){
+			cnt++;
+		}
+		if(sero(i)){
+			cnt++;
+		}
 	}
-	cout << result;
+	cout<<cnt;
 	return 0;
 }

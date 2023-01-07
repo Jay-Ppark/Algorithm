@@ -1,58 +1,57 @@
 #include<iostream>
 using namespace std;
-int op[4];
-int number[11];
 int N;
-int answeroper[11];
-int minans=1000000000;
-int maxans=-1000000000;
+int num[11];
+int opnum[4];
+int opchosen[11];
+int maxnum=-1000000000;
+int minnum=1000000000;
 int cal(){
-	int result=number[0];
+	int result=num[0];
 	for(int i=0;i<N-1;i++){
-		if(answeroper[i]==0){
-			result=result+number[i+1];
+		if(opchosen[i]==0){
+			result=result+num[i+1];
 		}
-		else if(answeroper[i]==1){
-			result=result-number[i+1];
+		else if(opchosen[i]==1){
+			result=result-num[i+1];
 		}
-		else if(answeroper[i]==2){
-			result=result*number[i+1];
+		else if(opchosen[i]==2){
+			result=result*num[i+1];
 		}
 		else{
-			result=result/number[i+1];
+			result=result/num[i+1];
 		}
 	}
 	return result;
 }
 void dfs(int cnt){
 	if(cnt==N-1){
-		int tmp = cal();
-		if(tmp>maxans){
-			maxans=tmp;
+		int tmp=cal();
+		if(tmp>maxnum){
+			maxnum=tmp;
 		}
-		if(tmp<minans){
-			minans=tmp;
+		if(tmp<minnum){
+			minnum=tmp;
 		}
-		return;
 	}
 	for(int i=0;i<4;i++){
-		if(op[i]>0){
-			op[i]--;
-			answeroper[cnt]=i;
+		if(opnum[i]>0){
+			opnum[i]--;
+			opchosen[cnt]=i;
 			dfs(cnt+1);
-			op[i]++;
+			opnum[i]++;
 		}
 	}
 }
 int main(void){
 	cin>>N;
 	for(int i=0;i<N;i++){
-		int tmp;
-		cin>>tmp;
-		number[i]=tmp;
+		cin>>num[i];
 	}
-	cin>>op[0]>>op[1]>>op[2]>>op[3];
+	for(int i=0;i<4;i++){
+		cin>>opnum[i];
+	}
 	dfs(0);
-	cout<<maxans<<'\n'<<minans;
+	cout<<maxnum<<'\n'<<minnum;
 	return 0;
 }

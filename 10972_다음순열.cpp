@@ -2,22 +2,22 @@
 #include<vector>
 #include<algorithm>
 using namespace std;
+int N;
 vector<int> v;
-int main(void) {
-	int N;
-	cin >> N;
-	for (int i = 0; i < N; i++) {
-		int temp;
-		cin >> temp;
-		v.push_back(temp);
+int main(void){
+	cin>>N;
+	for(int i=0;i<N;i++){
+		int tmp;
+		cin>>tmp;
+		v.push_back(tmp);
 	}
-	if (next_permutation(v.begin(), v.end())) {
-		for (int i = 0; i < N; i++) {
-			cout<< v[i] << " ";
+	if(next_permutation(v.begin(),v.end())){
+		for(int i=0;i<N;i++){
+			cout<<v[i]<<" ";
 		}
 	}
-	else {
-		cout << -1;
+	else{
+		cout<<-1;
 	}
 	return 0;
 }
