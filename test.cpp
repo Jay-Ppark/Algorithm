@@ -1,29 +1,28 @@
 #include<iostream>
 using namespace std;
-string gear[3];
-void movegear(int g,int d){
-	if(d==1){
-		//char tmp=gear[g][7];
-		for(int i=1;i<8;i++){
-			char tmp=gear[g][i-1];
-			cout<<tmp;
-			gear[g][i]=tmp;
+bool visited[6];
+int tcnt=0;
+void dfs(int cnt,int y){
+	if(cnt==3){
+		for(int i=0;i<6;i++){
+			if(visited[i]){
+				cout<<i;
+			}
 		}
-		//gear[g][0]=tmp;
+		tcnt++;
+		cout<<"\n";
+		return;
 	}
-	else{
-		char tmp=gear[g][0];
-		for(int i=0;i<7;i++){
-			gear[g][i]=gear[g][i+1];
+	for(int i=y;i<6;i++){
+		if(!visited[i]){
+			visited[i]=true;
+			dfs(cnt+1,i+1);
+			visited[i]=false;
 		}
-		//gear[g][7]=tmp;
 	}
 }
 int main(void){
-    cin>>gear[0];
-    movegear(0,1);
-    cout<<gear[0]<<'\n';
-    //movegear(0,-1);
-    //cout<<gear[0];
-    return 0;
+	dfs(0,0);
+	cout<<tcnt;
+	return 0;
 }

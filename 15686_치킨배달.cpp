@@ -1,56 +1,64 @@
 #include<iostream>
 #include<vector>
 using namespace std;
-int N;
-int maxchicken;
-vector<pair<int, int>> house;
-vector<pair<int, int>> chicken;
-int minchickendis = 1000000;
-bool visitedchicken[13];
-void erasechicken(int cnt,int nextc) {
-	if (cnt == maxchicken) {
-		int chickendissum = 0;
-		for (int i = 0; i < house.size(); i++) {
-			int mindis = 1000000;
-			int tmpdis = 0;
-			for (int j = 0; j < chicken.size(); j++) {
-				if (visitedchicken[j]) {
-					tmpdis = abs(house[i].first - chicken[j].first) + abs(house[i].second - chicken[j].second);
-					if (tmpdis < mindis) {
-						mindis = tmpdis;
-					}
+int N,M;
+int chickencnt;
+vector<pair<int,int>> chicken;
+vector<pair<int,int>> house;
+bool selectchicken[13];
+int ansmin=1e9;
+int cal(){
+	int tmphouse[101];
+	fill(tmphouse,tmphouse+100,5000);
+	int chickensize=chicken.size();
+	int housesize=house.size();
+	for(int i=0;i<chickensize;i++){
+		if(selectchicken[i]){
+			for(int j=0;j<housesize;j++){
+				int tmp=abs(chicken[i].first-house[j].first)+abs(chicken[i].second-house[j].second);
+				if(tmphouse[j]>tmp){
+					tmphouse[j]=tmp;
 				}
 			}
-			chickendissum = chickendissum + mindis;
 		}
-		if (minchickendis > chickendissum) {
-			minchickendis = chickendissum;
+	}
+	int result=0;
+	for(int i=0;i<housesize;i++){
+		result=result+tmphouse[i];
+	}
+	return result;
+}
+void dfs(int cnt,int y){
+	if(cnt==M){
+		int tmpmin=cal();
+		if(tmpmin<ansmin){
+			ansmin=tmpmin;
 		}
 		return;
 	}
-	for (int i = nextc; i < chicken.size(); i++) {
-		if (!visitedchicken[i]) {
-			visitedchicken[i] = true;
-			erasechicken(cnt + 1, i + 1);
-			visitedchicken[i] = false;
+	for(int i=y;i<chicken.size();i++){
+		if(!selectchicken[i]){
+			selectchicken[i]=true;
+			dfs(cnt+1,i+1);
+			selectchicken[i]=false;
 		}
 	}
 }
-int main(void) {
-	cin >> N >> maxchicken;
-	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < N; j++) {
+int main(void){
+	cin>>N>>M;
+	for(int i=0;i<N;i++){
+		for(int j=0;j<N;j++){
 			int tmp;
-			cin >> tmp;
-			if (tmp == 1) {
-				house.push_back({ i,j });
+			cin>>tmp;
+			if(tmp==2){
+				chicken.push_back({i,j});
 			}
-			else if (tmp == 2) {
-				chicken.push_back({ i,j });
+			else if(tmp==1){
+				house.push_back({i,j});
 			}
 		}
 	}
-	erasechicken(0, 0);
-	cout << minchickendis;
+	dfs(0,0);
+	cout<<ansmin;
 	return 0;
 }
