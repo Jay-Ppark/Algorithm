@@ -2,51 +2,28 @@
 #include<vector>
 #include<algorithm>
 using namespace std;
-int N;
-int treenum;
-int years;
+int N,M,K;
+int ground[10][10];
+int initground[10][10];
+int tmpground[10][10];
 vector<int> tree[10][10];
-int winternut[10][10];
-int nut[10][10];
-int dead[10][10];
-int dy[8]={-1,-1,-1,0,1,1,1,0};
-int dx[8]={-1,0,1,1,1,0,-1,-1};
-void init(){
-    for(int i=0;i<N;i++){
-        for(int j=0;j<N;j++){
-            nut[i][j]=5;
-        }
-    }
-}
-bool comp(int a,int b){
-    if(a<b){
-        return true;
-    }
-    else{
-        return false;
-    }
-}
+int dy[8]={-1,-1,-1,0,0,1,1,1};
+int dx[8]={-1,0,1,-1,1,-1,0,1};
+int treecnt;
 void spring(){
     for(int i=0;i<N;i++){
         for(int j=0;j<N;j++){
-            if(!tree[i][j].empty()){
-                sort(tree[i][j].begin(),tree[i][j].end(),comp);
-            }
-        }
-    }
-    for(int i=0;i<N;i++){
-        for(int j=0;j<N;j++){
-            for(int k=0;k<tree[i][j].size();k++){
-                if(tree[i][j][k]<=nut[i][j]){
-                    nut[i][j]=nut[i][j]-tree[i][j][k];
-                    tree[i][j][k]++;
+            sort(tree[i][j].begin(),tree[i][j].end());
+            for(int t=0;t<tree[i][j].size();t++){
+                if(ground[i][j]>=tree[i][j][t]){
+                    ground[i][j]=ground[i][j]-tree[i][j][t];
+                    tree[i][j][t]++;
                 }
                 else{
-                    int treesize=tree[i][j].size()-1;
-                    for(int p=treesize;p>=k;p--){
-                        dead[i][j]=dead[i][j]+(tree[i][j][p]/2);
+                    for(int r=tree[i][j].size()-1;r>=t;r--){
+                        tmpground[i][j]=tmpground[i][j]+(tree[i][j][r]/2);
                         tree[i][j].pop_back();
-                        treenum--;
+                        treecnt--;
                     }
                 }
             }
@@ -56,24 +33,22 @@ void spring(){
 void summer(){
     for(int i=0;i<N;i++){
         for(int j=0;j<N;j++){
-            if(dead[i][j]>0){
-                nut[i][j]=nut[i][j]+dead[i][j];
-                dead[i][j]=0;
-            }
+            ground[i][j]=ground[i][j]+tmpground[i][j];
+            tmpground[i][j]=0;
         }
     }
 }
 void fall(){
     for(int i=0;i<N;i++){
         for(int j=0;j<N;j++){
-            for(int k=0;k<tree[i][j].size();k++){
-                if(tree[i][j][k]%5==0){
-                    for(int p=0;p<8;p++){
-                        int ny=i+dy[p];
-                        int nx=j+dx[p];
+            for(int t=0;t<tree[i][j].size();t++){
+                if(tree[i][j][t]%5==0){
+                    for(int d=0;d<8;d++){
+                        int ny=i+dy[d];
+                        int nx=j+dx[d];
                         if(ny>=0&&ny<N&&nx>=0&&nx<N){
                             tree[ny][nx].push_back(1);
-                            treenum++;
+                            treecnt++;
                         }
                     }
                 }
@@ -84,32 +59,30 @@ void fall(){
 void winter(){
     for(int i=0;i<N;i++){
         for(int j=0;j<N;j++){
-            nut[i][j]=nut[i][j]+winternut[i][j];
+            ground[i][j]=ground[i][j]+initground[i][j];
         }
     }
 }
 int main(void){
-    cin>>N>>treenum>>years;
+    cin>>N>>M>>K;
     for(int i=0;i<N;i++){
         for(int j=0;j<N;j++){
-            cin>>winternut[i][j];
+            cin>>initground[i][j];
+            ground[i][j]=5;
         }
     }
-    for(int i=0;i<treenum;i++){
+    for(int i=0;i<M;i++){
         int x,y,z;
         cin>>y>>x>>z;
         tree[y-1][x-1].push_back(z);
+        treecnt++;
     }
-    init();
-    for(int i=0;i<years;i++){
+    for(int t=0;t<K;t++){
         spring();
         summer();
         fall();
         winter();
-        if(treenum==0){
-            break;
-        }
     }
-    cout<<treenum;
+    cout<<treecnt;
     return 0;
 }

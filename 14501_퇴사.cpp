@@ -10,6 +10,11 @@ int main(void){
 		cin>>times[i]>>money[i];
 	}
 	for(int i=N;i>=1;i--){
+		if(i==N){
+			if(i+times[i]<=N+1){
+				dp[i]=dp[i]+money[i];
+			}
+		}
 		if(i+times[i]<=N+1){
 			dp[i]=max(dp[i+1],dp[i+times[i]]+money[i]);
 		}
