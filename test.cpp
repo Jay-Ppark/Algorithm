@@ -1,28 +1,12 @@
 #include<iostream>
+#include<list>
 using namespace std;
-bool visited[6];
-int tcnt=0;
-void dfs(int cnt,int y){
-	if(cnt==3){
-		for(int i=0;i<6;i++){
-			if(visited[i]){
-				cout<<i;
-			}
-		}
-		tcnt++;
-		cout<<"\n";
-		return;
-	}
-	for(int i=y;i<6;i++){
-		if(!visited[i]){
-			visited[i]=true;
-			dfs(cnt+1,i+1);
-			visited[i]=false;
-		}
-	}
-}
 int main(void){
-	dfs(0,0);
-	cout<<tcnt;
-	return 0;
+    list<int> L = {1,2}; // 1 2
+    list<int>::iterator t = L.end(); // t는 1을 가리키는 중
+    t=L.erase(t);
+    for(list<int>::iterator it = L.begin(); it!=L.end();it++){
+        cout<<*it<<' ';
+    }
+    return 0;
 }
