@@ -1,49 +1,55 @@
 #include<iostream>
 #include<queue>
-#include<string>
 using namespace std;
-queue <int> q;
-string command;
 int main(void){
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
 	int N;
-	cin >> N;
-	for (int i = 0; i < N; i++){
-		cin >> command;
-		if (command.compare("push") == 0){
-			int temp;
-			cin >> temp;
-			q.push(temp);
+	cin>>N;
+	queue<int> Q;
+	for(int i=0;i<N;i++){
+		string order;
+		cin>>order;
+		if(order=="push"){
+			int tmp;
+			cin>>tmp;
+			Q.push(tmp);
 		}
-		else if (command.compare("pop") == 0){
-			if(q.empty()){
-                cout<<"-1"<<'\n';
-            }
-            else{
-                cout<<q.front()<<'\n';
-                q.pop();
-            }
+		else if(order=="pop"){
+			if(Q.empty()){
+				cout<<"-1\n";
+			}
+			else{
+				cout<<Q.front()<<'\n';
+				Q.pop();
+			}
 		}
-		else if (command.compare("size") == 0){
-			cout << q.size() << '\n';
+		else if(order=="size"){
+			cout<<Q.size()<<'\n';
 		}
-		else if (command.compare("empty") == 0){
-			cout << q.empty() << '\n';
+		else if(order=="empty"){
+			if(Q.empty()){
+				cout<<"1\n";
+			}
+			else{
+				cout<<"0\n";
+			}
 		}
-		else if (command.compare("front") == 0){
-			if(q.empty()){
-                cout<<"-1"<<'\n';
-            }
-            else{
-                cout<<q.front()<<'\n';
-            }
+		else if(order=="front"){
+			if(Q.empty()){
+				cout<<"-1\n";
+			}
+			else{
+				cout<<Q.front()<<'\n';
+			}
 		}
-		else if (command.compare("back") == 0){
-			if(q.empty()){
-                cout<<"-1"<<'\n';
-            }
-            else{
-                cout<<q.back()<<'\n';
-            }
+		else if(order=="back"){
+			if(Q.empty()){
+				cout<<"-1\n";
+			}
+			else{
+				cout<<Q.back()<<'\n';
+			}
 		}
 	}
 	return 0;

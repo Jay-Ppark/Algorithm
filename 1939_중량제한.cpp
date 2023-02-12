@@ -1,68 +1,61 @@
 #include<iostream>
-#include<queue>
 #include<vector>
 #include<algorithm>
+#include<queue>
 using namespace std;
-int citynum, roadnum;
-bool visitedcity[100001];
-vector<pair<int, int>> v[100001];
-int highwei;
-int sfac, efac;
-void init() {
-	for (int i = 1; i <= 100000; i++) {
-		visitedcity[i] = false;
-	}
-}
-bool BFS(int w) {
+int N,M;
+vector<pair<int,int>> v[10001];
+int startn, endn;
+bool BFS(int x){
+	bool visited[10001];
+	fill(visited,visited+10001,false);
 	queue<int> q;
-	visitedcity[sfac] = true;
-	q.push(sfac);
-	while (!q.empty()) {
-		int tmps = q.front();
+	visited[startn]=true;
+	q.push(startn);
+	while(!q.empty()){
+		int t=q.front();
 		q.pop();
-		if (tmps == efac) {
+		if(t==endn){
 			return true;
 		}
-		for (int i = 0; i < v[tmps].size(); i++) {
-			int nextc = v[tmps][i].first;
-			int tmpw = v[tmps][i].second;
-			if (!visitedcity[nextc] && tmpw >= w) {
-				visitedcity[nextc] = true;
-				q.push(nextc);
+		for(int i=0;i<v[t].size();i++){
+			int nextn=v[t][i].first;
+			int tmpw=v[t][i].second;
+			if(!visited[nextn]&&tmpw>=x){
+				q.push(nextn);
+				visited[nextn]=true;
 			}
 		}
 	}
 	return false;
 }
-int main(void) {
-	cin >> citynum >> roadnum;
-	for (int i = 0; i < roadnum; i++) {
-		int startc, endc, wei;
-		cin >> startc >> endc >> wei;
-		if (highwei < wei) {
-			highwei = wei;
-		}
-		v[startc].push_back({ endc,wei });
-		v[endc].push_back({ startc,wei });
+int main(void){
+	cin>>N>>M;
+	for(int i=0;i<M;i++){
+		int a,b,c;
+		cin>>a>>b>>c;
+		v[a].push_back({b,c});
+		v[b].push_back({a,c});
 	}
-	cin >> sfac >> efac;
-	for (int i = 1; i <= citynum; i++) {
-		sort(v[i].begin(), v[i].end());
+	cin>>startn>>endn;
+	for(int i=1;i<=N;i++){
+		sort(v[i].begin(),v[i].end());
 	}
-	//cout << "start" << '\n';
-	int lowwei = 0;
-	//cout << highwei << " " << lowwei << '\n';
-	while (lowwei <= highwei) {
-		int midwei = (lowwei + highwei) / 2;
-		if (BFS(midwei)) {
-			lowwei = midwei + 1;
+	int minw=1;
+	int maxw=1000000000;
+	int answer=0;
+	while(minw<=maxw){
+		int midw=(minw+maxw)/2;
+		if(BFS(midw)){
+			if(answer<midw){
+				answer=midw;
+			}
+			minw=midw+1;
 		}
-		else {
-			highwei = midwei - 1;
+		else{
+			maxw=midw-1;
 		}
-		init();
-		//cout << highwei << " " << lowwei << '\n';
 	}
-	cout << highwei;
+	cout<<answer;
 	return 0;
 }

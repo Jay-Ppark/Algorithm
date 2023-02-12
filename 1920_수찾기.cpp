@@ -1,42 +1,48 @@
 #include<iostream>
+#include<vector>
 #include<algorithm>
 using namespace std;
-int arr[100001];
-int findNum(int N,int t){
-	int start_index=0;
-	int end_index=N;
-	while(start_index<=end_index){
-		int mid_index = (start_index+end_index)/2;
-		int mid_value = arr[mid_index];
-		if(mid_value<t){
-			start_index=mid_index+1;
+vector<int> v;
+int N;
+bool findnum(int x){
+	int startn=0;
+	int endn=N-1;
+	while(startn<=endn){
+		int mid=(startn+endn)/2;
+		if(v[mid]<x){
+			startn=mid+1;
 		}
-		else if(mid_value>t){
-			end_index=mid_index-1;
+		else if(v[mid]>x){
+			endn=mid-1;
 		}
 		else{
-			return 1;
+			return true;
 		}
 	}
-	return 0;
+	return false;
 }
 int main(void){
 	ios::sync_with_stdio(false);
 	cin.tie(NULL);
-	int N;
 	cin>>N;
 	for(int i=0;i<N;i++){
 		int tmp;
 		cin>>tmp;
-		arr[i]=tmp;
+		v.push_back(tmp);
 	}
-	sort(arr,arr+N);
+	sort(v.begin(),v.end());
 	int M;
 	cin>>M;
 	for(int i=0;i<M;i++){
 		int tmp;
 		cin>>tmp;
-		cout<<findNum(N-1,tmp)<<'\n';
+		bool answ = findnum(tmp);
+		if(answ){
+			cout<<"1\n";
+		}
+		else{
+			cout<<"0\n";
+		}
 	}
 	return 0;
 }

@@ -1,63 +1,69 @@
 #include<iostream>
 #include<deque>
-#include<string>
 using namespace std;
-deque <int> dq;
-string command;
 int main(void){
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
 	int N;
-	cin >> N;
-	for (int i = 0; i < N; i++){
-		cin >> command;
-		if (command.compare("push_front") == 0){
-			int temp;
-			cin >> temp;
-			dq.push_front(temp);
+	cin>>N;
+	deque<int> DQ;
+	for(int i=0;i<N;i++){
+		string order;
+		cin>>order;
+		if(order=="push_front"){
+			int tmp;
+			cin>>tmp;
+			DQ.push_front(tmp);
 		}
-		else if (command.compare("push_back") == 0){
-			int temp;
-			cin >> temp;
-			dq.push_back(temp);
+		else if(order=="push_back"){
+			int tmp;
+			cin>>tmp;
+			DQ.push_back(tmp);
 		}
-		else if (command.compare("pop_front") == 0){
-			if(dq.empty()){
-                cout<<"-1"<<'\n';
-            }
-            else{
-                cout<<dq.front()<<'\n';
-                dq.pop_front();
-            }
+		else if(order=="pop_front"){
+			if(DQ.empty()){
+				cout<<"-1\n";
+			}
+			else{
+				cout<<DQ.front()<<'\n';
+				DQ.pop_front();
+			}
 		}
-		else if (command.compare("pop_back") == 0){
-			if(dq.empty()){
-                cout<<"-1"<<'\n';
-            }
-            else{
-                cout<<dq.back()<<'\n';
-                dq.pop_back();
-            }
+		else if(order=="pop_back"){
+			if(DQ.empty()){
+				cout<<"-1\n";
+			}
+			else{
+				cout<<DQ.back()<<'\n';
+				DQ.pop_back();
+			}
 		}
-		else if (command.compare("size") == 0){
-			cout << dq.size() << '\n';
+		else if(order=="size"){
+			cout<<DQ.size()<<"\n";
 		}
-		else if (command.compare("empty") == 0){
-			cout << dq.empty() << '\n';
+		else if(order=="empty"){
+			if(DQ.empty()){
+				cout<<"1\n";
+			}
+			else{
+				cout<<"0\n";
+			}
 		}
-		else if (command.compare("front") == 0){
-			if(dq.empty()){
-                cout<<"-1"<<'\n';
-            }
-            else{
-                cout<<dq.front()<<'\n';
-            }
+		else if(order=="front"){
+			if(DQ.empty()){
+				cout<<"-1\n";
+			}
+			else{
+				cout<<DQ.front()<<'\n';
+			}
 		}
-		else if (command.compare("back") == 0){
-			if(dq.empty()){
-                cout<<"-1"<<'\n';
-            }
-            else{
-                cout<<dq.back()<<'\n';
-            }
+		else if(order=="back"){
+			if(DQ.empty()){
+				cout<<"-1\n";
+			}
+			else{
+				cout<<DQ.back()<<'\n';
+			}
 		}
 	}
 	return 0;

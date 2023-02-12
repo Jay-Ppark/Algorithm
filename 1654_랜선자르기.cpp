@@ -1,54 +1,50 @@
 #include<iostream>
 #include<vector>
+#include<algorithm>
 using namespace std;
-int main(void)
-{
-	int haveline;
-	int needline;
-	cin >> haveline >> needline;
-	vector<long long> lines;
-	long long int maxline = 0;
-	long long int result = 0;
-	for (int i = 0; i < haveline; i++)
-	{
+vector<long long int> v;
+int already_line;
+int needline;
+bool calline(long long int x){
+	int result=0;
+	for(int i=0;i<already_line;i++){
+		result=result+v[i]/x;
+	}
+	if(result>=needline){
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+int findMaxLine(){
+	long long int min_line=1;
+	long long int max_line=v[already_line-1];
+	int answer=0;
+	while(min_line<=max_line){
+		long long int mid_line=(min_line+max_line)/2;
+		if(calline(mid_line)){
+			if(answer<mid_line){
+				answer=mid_line;
+			}
+			min_line=mid_line+1;
+		}
+		else{
+			max_line=mid_line-1;
+		}
+	}
+	return answer;
+}
+int main(void){
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cin>>already_line>>needline;
+	for(int i=0;i<already_line;i++){
 		int tmp;
-		cin >> tmp;
-		lines.push_back(tmp);
-		if (maxline < tmp)
-		{
-			maxline = tmp;
-		}
+		cin>>tmp;
+		v.push_back(tmp);
 	}
-	long long int leftline = 0;
-	long long int rightline = maxline;
-	while (leftline <= rightline)
-	{
-		long long int midline = (leftline + rightline) / 2;
-		if (midline == 0)
-		{
-			midline = 1;
-		}
-		long long int tmplinecnt = 0;
-		for (int i = 0; i < haveline; i++)
-		{
-			if (lines[i] >= midline)
-			{
-				tmplinecnt = tmplinecnt + lines[i] / midline;
-			}
-		}
-		if (tmplinecnt >= needline)
-		{
-			if (result < midline)
-			{
-				result = midline;
-			}
-			leftline = midline + 1;
-		}
-		else
-		{
-			rightline = midline - 1;
-		}
-	}
-	cout << result;
+	sort(v.begin(),v.end());
+	cout<<findMaxLine();
 	return 0;
 }
