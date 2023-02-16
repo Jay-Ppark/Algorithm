@@ -2,51 +2,39 @@
 #include<vector>
 #include<algorithm>
 using namespace std;
-vector<long long> house;
-int housenum;
-int havenet(int n)
-{
-	int cnt = 0;
-	long long int start = house[0];
-	for (int i = 1; i < housenum; i++)
-	{
-		if (house[i] - start >= n)
-		{
-			cnt++;
-			start = house[i];
+vector<int> v;
+int N;
+int C;
+int findmaxlen(){
+	int left=0;
+	int right=1000000000;
+	while(left<=right){
+		int tmpcnt=1;
+		int mid=(left+right)/2;
+		int prev=v[0];
+		for(int i=1;i<v.size();i++){
+			if(v[i]-prev>=mid){
+				prev=v[i];
+				tmpcnt++;
+			}
+		}
+		if(tmpcnt>=C){
+			left=mid+1;
+		}
+		else{
+			right=mid-1;
 		}
 	}
-	return cnt + 1;
+	return right;
 }
-int main(void)
-{
-	long long int result = 0;
-	int netnum;
-	cin >> housenum >> netnum;
-	long long int max = 0;
-	for (int i = 1; i <= housenum; i++)
-	{
-		long long int tmp;
-		cin >> tmp;
-		house.push_back(tmp);
+int main(void){
+	cin>>N>>C;
+	for(int i=0;i<N;i++){
+		int tmp;
+		cin>>tmp;
+		v.push_back(tmp);
 	}
-	sort(house.begin(), house.end());
-	long long int lefth = 1;
-	long long int righth = house[housenum - 1] - house[0];
-	while (lefth <= righth)
-	{
-		long long int midh = (righth + lefth) / 2;
-		long long int tmp = havenet(midh);
-		if (tmp >= netnum)
-		{
-			result = midh;
-			lefth = midh + 1;
-		}
-		else
-		{
-			righth = midh - 1;
-		}
-	}
-	cout << result;
+	sort(v.begin(),v.end());
+	cout<<findmaxlen();
 	return 0;
 }
