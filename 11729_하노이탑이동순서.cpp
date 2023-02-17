@@ -1,18 +1,22 @@
 #include<iostream>
 using namespace std;
-void hanoi(int n,int start,int bypass,int to){
+int N;
+void hanoi(int n,int from,int by,int to){
 	if(n==1){
-		cout<<start<<" "<<to<<'\n';
+		cout<<from<<' '<<to<<'\n';
 		return;
 	}
-	hanoi(n-1,start,to,bypass);
-	cout<<start<<" "<<to<<'\n';
-	hanoi(n-1,bypass,start,to);
+	hanoi(n-1,from,to,by);
+	cout<<from<<' '<<to<<'\n';
+	hanoi(n-1,by,from,to);
 }
 int main(void){
-	int n;
-	cin>>n;
-	cout<<(1<<n)-1<<'\n';
-	hanoi(n,1,2,3);
+	cin>>N;
+	int result=1;
+	for(int i=0;i<N;i++){
+		result=result*2;
+	}
+	cout<<result-1<<'\n';
+	hanoi(N,1,2,3);
 	return 0;
 }
