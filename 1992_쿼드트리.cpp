@@ -1,75 +1,38 @@
 #include<iostream>
-#include<string>
 using namespace std;
-int N;
-bool arr[64][64];
-void solve(int t,int tmpy,int tmpx)
-{
-	if (t == 1)
-	{
-		if (arr[tmpy][tmpx])
-		{
-			cout << 1;
+char arr[65][65];
+bool check(int y,int x,int z){
+	for(int i=y;i<y+z;i++){
+		for(int j=x;j<x+z;j++){
+			if(arr[y][x]!=arr[i][j]){
+				return false;
+			}
 		}
-		else
-		{
-			cout << 0;
-		}
+	}
+	return true;
+}
+void countarr(int y,int x,int z){
+	if(check(y,x,z)){
+		cout<<arr[y][x];
 		return;
 	}
-	bool Isblack = true;
-	bool Iswhite = true;
-	for (int i = tmpy; i < tmpy + t; i++)
-	{
-		for (int j = tmpx; j < tmpx + t; j++)
-		{
-			if (arr[i][j])
-			{
-				Iswhite = false;
-			}
-			else
-			{
-				Isblack = false;
-			}
+	int n=z/2;
+	cout<<"(";
+	for(int i=0;i<2;i++){
+		for(int j=0;j<2;j++){
+			countarr(y+i*n,x+j*n,n);
 		}
 	}
-	if (Isblack)
-	{
-		cout << 1;
-	}
-	else if (Iswhite)
-	{
-		cout << 0;
-	}
-	else
-	{
-		cout << '(';
-		solve(t / 2, tmpy, tmpx);
-		solve(t / 2, tmpy, tmpx + t / 2);
-		solve(t / 2, tmpy + t / 2, tmpx);
-		solve(t / 2, tmpy + t / 2, tmpx + t / 2);
-		cout << ')';
-	}
+	cout<<")";
 }
-int main(void)
-{
-	cin >> N;
-	for (int i = 0; i < N; i++)
-	{
-		string tmp;
-		cin >> tmp;
-		for (int j = 0; j < N; j++)
-		{
-			if (tmp[j] == '0')
-			{
-				arr[i][j] = false;
-			}
-			else
-			{
-				arr[i][j] = true;
-			}
+int main(void){
+	int N;
+	cin>>N;
+	for(int i=0;i<N;i++){
+		for(int j=0;j<N;j++){
+			cin>>arr[i][j];
 		}
 	}
-	solve(N, 0, 0);
+	countarr(0,0,N);
 	return 0;
 }
