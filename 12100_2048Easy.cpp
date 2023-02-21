@@ -1,285 +1,167 @@
 #include<iostream>
-#include<queue>
 #include<vector>
 using namespace std;
 int N;
-int board[20][20];
-int copyBoard[20][20];
-int c[5];
-int maxanswer;
-vector<int> v;
-void FindMax(){
+int gamemap[20][20];
+int tmpgamemap[20][20];
+vector<int> dir;
+int maxgame=0;
+void moveleft(){
+    int tmp[20];
     for(int i=0;i<N;i++){
+        fill(tmp,tmp+20,0);
+        int index=0;
         for(int j=0;j<N;j++){
-            if(copyBoard[i][j]>maxanswer){
-                maxanswer=copyBoard[i][j];
+            if(tmpgamemap[i][j]==0){
+                continue;
             }
+            if(tmp[index]==0){
+                tmp[index]=tmpgamemap[i][j];
+            }
+            else if(tmp[index]==tmpgamemap[i][j]){
+                tmp[index]=tmp[index]*2;
+                index++;
+            }
+            else{
+                index++;
+                tmp[index]=tmpgamemap[i][j];
+            }
+        }
+        for(int j=0;j<N;j++){
+            tmpgamemap[i][j]=tmp[j];
         }
     }
 }
-void Init(){
+void moveright(){
+    int tmp[20];
     for(int i=0;i<N;i++){
+        fill(tmp,tmp+20,0);
+        int index=N-1;
+        for(int j=N-1;j>=0;j--){
+            if(tmpgamemap[i][j]==0){
+                continue;
+            }
+            if(tmp[index]==0){
+                tmp[index]=tmpgamemap[i][j];
+            }
+            else if(tmp[index]==tmpgamemap[i][j]){
+                tmp[index]=tmp[index]*2;
+                index--;
+            }
+            else{
+                index--;
+                tmp[index]=tmpgamemap[i][j];
+            }
+        }
         for(int j=0;j<N;j++){
-            copyBoard[i][j]=board[i][j];
+            tmpgamemap[i][j]=tmp[j];
         }
     }
 }
-void left(){
-    //이동
+void moveup(){
+    int tmp[20];
     for(int i=0;i<N;i++){
-        for(int j=0;j<N-1;j++){
-            bool check=false;
-            if(copyBoard[i][j]==0){
-                int k=j;
-                while(k<N){
-                    if(copyBoard[i][k]!=0){
-                        check=true;
-                        break;
-                    }
-                    k++;
-                }
-                if(check){
-                    copyBoard[i][j]=copyBoard[i][k];
-                    copyBoard[i][k]=0;
-                }
+        fill(tmp,tmp+20,0);
+        int index=0;
+        for(int j=0;j<N;j++){
+            if(tmpgamemap[j][i]==0){
+                continue;
+            }
+            if(tmp[index]==0){
+                tmp[index]=tmpgamemap[j][i];
+            }
+            else if(tmp[index]==tmpgamemap[j][i]){
+                tmp[index]=tmp[index]*2;
+                index++;
+            }
+            else{
+                index++;
+                tmp[index]=tmpgamemap[j][i];
             }
         }
-    }
-    //합치기
-    for(int i=0;i<N;i++){
-        for(int j=0;j<N-1;j++){
-            if(copyBoard[i][j]==copyBoard[i][j+1]){
-                copyBoard[i][j]=copyBoard[i][j]*2;
-                copyBoard[i][j+1]=0;
-            }
-        }
-    }
-    //이동
-    for(int i=0;i<N;i++){
-        for(int j=0;j<N-1;j++){
-            bool check=false;
-            if(copyBoard[i][j]==0){
-                int k=j;
-                while(k<N){
-                    if(copyBoard[i][k]!=0){
-                        check=true;
-                        break;
-                    }
-                    k++;
-                }
-                if(check){
-                    copyBoard[i][j]=copyBoard[i][k];
-                    copyBoard[i][k]=0;
-                }
-            }
+        for(int j=0;j<N;j++){
+            tmpgamemap[j][i]=tmp[j];
         }
     }
 }
-void right(){
-    //이동
+void movedown(){
+    int tmp[20];
     for(int i=0;i<N;i++){
-        for(int j=N-1;j>0;j--){
-            bool check=false;
-            if(copyBoard[i][j]==0){
-                int k=j;
-                while(k>=0){
-                    if(copyBoard[i][k]!=0){
-                        check=true;
-                        break;
-                    }
-                    k--;
-                }
-                if(check){
-                    copyBoard[i][j]=copyBoard[i][k];
-                    copyBoard[i][k]=0;
-                }
+        fill(tmp,tmp+20,0);
+        int index=N-1;
+        for(int j=N-1;j>=0;j--){
+            if(tmpgamemap[j][i]==0){
+                continue;
+            }
+            if(tmp[index]==0){
+                tmp[index]=tmpgamemap[j][i];
+            }
+            else if(tmp[index]==tmpgamemap[j][i]){
+                tmp[index]=tmp[index]*2;
+                index--;
+            }
+            else{
+                index--;
+                tmp[index]=tmpgamemap[j][i];
             }
         }
-    }
-    //합치기
-    for(int i=0;i<N;i++){
-        for(int j=N-1;j>0;j--){
-            if(copyBoard[i][j]==copyBoard[i][j-1]){
-                copyBoard[i][j]=copyBoard[i][j]*2;
-                copyBoard[i][j-1]=0;
-            }
-        }
-    }
-    //이동
-    for(int i=0;i<N;i++){
-        for(int j=N-1;j>0;j--){
-            bool check=false;
-            if(copyBoard[i][j]==0){
-                int k=j;
-                while(k>=0){
-                    if(copyBoard[i][k]!=0){
-                        check=true;
-                        break;
-                    }
-                    k--;
-                }
-                if(check){
-                    copyBoard[i][j]=copyBoard[i][k];
-                    copyBoard[i][k]=0;
-                }
-            }
+        for(int j=0;j<N;j++){
+            tmpgamemap[j][i]=tmp[j];
         }
     }
 }
-void up(){
-    //이동
-    for(int i=0;i<N-1;i++){
-        for(int j=0;j<N;j++){
-            bool check=false;
-            if(copyBoard[i][j]==0){
-                int k=i;
-                while(k<N){
-                    if(copyBoard[k][j]!=0){
-                        check=true;
-                        break;
-                    }
-                    k++;
-                }
-                if(check){
-                    copyBoard[i][j]=copyBoard[k][j];
-                    copyBoard[k][j]=0;
-                }
-            }
+int calgame(){
+    for(int i=0;i<20;i++){
+        for(int j=0;j<20;j++){
+            tmpgamemap[i][j]=gamemap[i][j];
         }
     }
-    //합치기
-    for(int i=0;i<N-1;i++){
-        for(int j=0;j<N;j++){
-            if(copyBoard[i][j]==copyBoard[i+1][j]){
-                copyBoard[i][j]=copyBoard[i][j]*2;
-                copyBoard[i+1][j]=0;
-            }
-        }
-    }
-    //이동
-    for(int i=0;i<N-1;i++){
-        for(int j=0;j<N;j++){
-            bool check=false;
-            if(copyBoard[i][j]==0){
-                int k=i;
-                while(k<N){
-                    if(copyBoard[k][j]!=0){
-                        check=true;
-                        break;
-                    }
-                    k++;
-                }
-                if(check){
-                    copyBoard[i][j]=copyBoard[k][j];
-                    copyBoard[k][j]=0;
-                }
-            }
-        }
-    }
-}
-void down(){
-    //이동
-    for(int i=N-1;i>0;i--){
-        for(int j=0;j<N;j++){
-            bool check=false;
-            if(copyBoard[i][j]==0){
-                int k=i;
-                while(k>=0){
-                    if(copyBoard[k][j]!=0){
-                        check=true;
-                        break;
-                    }
-                    k--;
-                }
-                if(check){
-                    copyBoard[i][j]=copyBoard[k][j];
-                    copyBoard[k][j]=0;
-                }
-            }
-        }
-    }
-    //합치기
-    for(int i=N-1;i>0;i--){
-        for(int j=0;j<N;j++){
-            if(copyBoard[i][j]==copyBoard[i-1][j]){
-                copyBoard[i][j]=copyBoard[i][j]*2;
-                copyBoard[i-1][j]=0;
-            }
-        }
-    }
-    //이동
-    for(int i=N-1;i>0;i--){
-        for(int j=0;j<N;j++){
-            bool check=false;
-            if(copyBoard[i][j]==0){
-                int k=i;
-                while(k>=0){
-                    if(copyBoard[k][j]!=0){
-                        check=true;
-                        break;
-                    }
-                    k--;
-                }
-                if(check){
-                    copyBoard[i][j]=copyBoard[k][j];
-                    copyBoard[k][j]=0;
-                }
-            }
-        }
-    }
-}
-void DFS(){
     for(int i=0;i<5;i++){
-        if(v[i]==0){
-            left();
+        if(dir[i]==0){
+            moveleft();
         }
-        else if(v[i]==1){
-            right();
+        else if(dir[i]==1){
+            moveright();
         }
-        else if(v[i]==2){
-            up();
+        else if(dir[i]==2){
+            moveup();
         }
         else{
-            down();
+            movedown();
         }
     }
-    FindMax();
+    int maxnum=0;
+    for(int i=0;i<N;i++){
+        for(int j=0;j<N;j++){
+            if(tmpgamemap[i][j]>maxnum){
+                maxnum=tmpgamemap[i][j];
+            }
+        }
+    }
+    return maxnum;
 }
-void makeorder(){//(int idx, int cnt){
-    if(v.size()==5){
-        Init();
-        DFS();
+void selectd(int cnt){
+    if(cnt==5){
+        int tmpmax=calgame();
+        if(tmpmax>maxgame){
+            maxgame=tmpmax;
+        }
         return;
     }
-    else{
-        for(int i=0;i<4;i++){
-            v.push_back(i);
-            makeorder();
-            v.pop_back();
-        }
+    for(int i=0;i<4;i++){
+        dir.push_back(i);
+        selectd(cnt+1);
+        dir.pop_back();
     }
-    //if(cnt==5){
-    //    Init();
-    //    DFS();
-    //    return;
-    //}
-    //for(int i=0;i<4;i++){
-    //    c[cnt]=i;
-    //    makeorder(i,cnt+1);
-    //}
-}
-void solve(){
-    //makeorder(0,0);
-    makeorder();
 }
 int main(void){
     cin>>N;
     for(int i=0;i<N;i++){
         for(int j=0;j<N;j++){
-            cin>>board[i][j];
+            cin>>gamemap[i][j];
         }
     }
-    solve();
-    cout<<maxanswer;
+    selectd(0);
+    cout<<maxgame;
     return 0;
 }

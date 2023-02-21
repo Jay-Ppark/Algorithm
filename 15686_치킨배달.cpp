@@ -1,46 +1,47 @@
 #include<iostream>
 #include<vector>
+#include<queue>
+#include<cstdlib>
 using namespace std;
 int N,M;
-int chickencnt;
+int citymap[50][50];
 vector<pair<int,int>> chicken;
 vector<pair<int,int>> house;
-bool selectchicken[13];
-int ansmin=1e9;
-int cal(){
-	int tmphouse[101];
-	fill(tmphouse,tmphouse+100,5000);
-	int chickensize=chicken.size();
-	int housesize=house.size();
-	for(int i=0;i<chickensize;i++){
-		if(selectchicken[i]){
-			for(int j=0;j<housesize;j++){
-				int tmp=abs(chicken[i].first-house[j].first)+abs(chicken[i].second-house[j].second);
-				if(tmphouse[j]>tmp){
-					tmphouse[j]=tmp;
+int housecnt[100];
+bool chickenv[13];
+int ccnt=0;
+int dy[4]={-1,0,1,0};
+int dx[4]={0,-1,0,1};
+int result=5000000;
+int calchicken(){
+	int tmpresult=0;
+	for(int i=0;i<house.size();i++){
+		int mintmp=5000;
+		for(int j=0;j<chicken.size();j++){
+			if(chickenv[j]){
+				int tmp=abs(house[i].first-chicken[j].first)+abs(house[i].second-chicken[j].second);
+				if(tmp<mintmp){
+					mintmp=tmp;
 				}
 			}
 		}
+		tmpresult=tmpresult+mintmp;
 	}
-	int result=0;
-	for(int i=0;i<housesize;i++){
-		result=result+tmphouse[i];
-	}
-	return result;
+	return tmpresult;
 }
-void dfs(int cnt,int y){
+void selectchicken(int n,int cnt){
 	if(cnt==M){
-		int tmpmin=cal();
-		if(tmpmin<ansmin){
-			ansmin=tmpmin;
+		int tmpmax = calchicken();
+		if(tmpmax<result){
+			result=tmpmax;
 		}
 		return;
 	}
-	for(int i=y;i<chicken.size();i++){
-		if(!selectchicken[i]){
-			selectchicken[i]=true;
-			dfs(cnt+1,i+1);
-			selectchicken[i]=false;
+	for(int i=n;i<ccnt;i++){
+		if(!chickenv[i]){
+			chickenv[i]=true;
+			selectchicken(i+1,cnt+1);
+			chickenv[i]=false;
 		}
 	}
 }
@@ -48,17 +49,17 @@ int main(void){
 	cin>>N>>M;
 	for(int i=0;i<N;i++){
 		for(int j=0;j<N;j++){
-			int tmp;
-			cin>>tmp;
-			if(tmp==2){
+			cin>>citymap[i][j];
+			if(citymap[i][j]==2){
 				chicken.push_back({i,j});
+				ccnt++;
 			}
-			else if(tmp==1){
+			else if(citymap[i][j]==1){
 				house.push_back({i,j});
 			}
 		}
 	}
-	dfs(0,0);
-	cout<<ansmin;
+	selectchicken(0,0);
+	cout<<result;
 	return 0;
 }
