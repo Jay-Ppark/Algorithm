@@ -2,30 +2,40 @@
 #include<vector>
 #include<algorithm>
 using namespace std;
-vector<pair<int, int>> conference;
-int main(void)
-{
-	int N;
-	cin >> N;
-	for (int i = 0; i < N; i++)
-	{
-		int startT;
-		int endT;
-		cin >> startT >> endT;
-		conference.push_back({endT,startT });
+int N;
+vector<pair<int,int>> v;
+bool comp(pair<int,int> &a, pair<int,int> &b){
+	if(a.second<b.second){
+		return true;
 	}
-	int maxconfcnt = 1;
-	sort(conference.begin(), conference.end());
-	int firstendtime = conference[0].first;
-	for (int i = 1; i < N; i++)
-	{
-		int nextstarttime = conference[i].second;
-		if (nextstarttime >= firstendtime)
-		{
-			firstendtime = conference[i].first;
-			maxconfcnt++;
+	else if(a.second>b.second){
+		return false;
+	}
+	else{
+		if(a.first<b.first){
+			return true;
+		}
+		else{
+			return false;
 		}
 	}
-	cout << maxconfcnt;
+}
+int main(void){
+	cin>>N;
+	for(int i=0;i<N;i++){
+		int s,e;
+		cin>>s>>e;
+		v.push_back({s,e});
+	}
+	sort(v.begin(),v.end(),comp);
+	int cnt=1;
+	int endt=v[0].second;
+	for(int i=1;i<N;i++){
+		if(endt<=v[i].first){
+			endt=v[i].second;
+			cnt++;
+		}
+	}
+	cout<<cnt;
 	return 0;
 }
