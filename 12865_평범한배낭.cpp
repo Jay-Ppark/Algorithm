@@ -1,27 +1,24 @@
 #include<iostream>
-#include<vector>
 using namespace std;
-int N, maxweight;
-vector<pair<int,int>> item;
+int w[101];
+int v[101];
 int dp[101][100001];
 int main(void){
-    cin>>N>>maxweight;
-    item.push_back({0,0});
+    int N,maxw;
+    cin>>N>>maxw;
     for(int i=0;i<N;i++){
-        int tmpw,tmpv;
-        cin>>tmpw>>tmpv;
-        item.push_back({tmpw,tmpv});
+        cin>>w[i+1]>>v[i+1];   
     }
     for(int i=1;i<=N;i++){
-        for(int j=1;j<=maxweight;j++){
-            if(j-item[i].first>=0){
-                dp[i][j]=max(dp[i-1][j],dp[i-1][j-item[i].first]+item[i].second);
+        for(int j=0;j<=maxw;j++){
+            if(j>=w[i]){
+                dp[i][j]=max(dp[i-1][j],dp[i-1][j-w[i]]+v[i]);
             }
             else{
                 dp[i][j]=dp[i-1][j];
             }
         }
     }
-    cout<<dp[N][maxweight];
+    cout<<dp[N][maxw];
     return 0;
 }

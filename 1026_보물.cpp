@@ -1,29 +1,36 @@
 #include<iostream>
 #include<vector>
 #include<algorithm>
-#include<functional>
 using namespace std;
 vector<int> A;
 vector<int> B;
+bool comp(int &a,int &b){
+	if(a>b){
+		return true;
+	}
+	else{
+		return false;
+	}
+}
 int main(void){
 	int N;
-	cin >> N;
-	for (int i = 0; i < N; i++){
+	cin>>N;
+	for(int i=0;i<N;i++){
 		int tmp;
 		cin>>tmp;
 		A.push_back(tmp);
 	}
-	for (int i = 0; i < N; i++){
+	for(int i=0;i<N;i++){
 		int tmp;
 		cin>>tmp;
 		B.push_back(tmp);
 	}
-	sort(A.begin(), A.end(), greater<int>());
-	sort(B.begin(),B.end());
-	int sum = 0;
-	for (int i = 0; i < N; i++){
-		sum = sum + A[i] * B[i];
+	sort(A.begin(),A.end());
+	sort(B.begin(),B.end(),comp);
+	int result=0;
+	for(int i=0;i<N;i++){
+		result=result+A[i]*B[i];
 	}
-	cout << sum;
+	cout<<result;
 	return 0;
 }

@@ -1,9 +1,11 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
+#include<iostream>
+#include<vector>
+#include<algorithm>
 using namespace std;
+int N,M,maxL;
 vector<int> v;
-bool comp(int a,int b){
+bool visited[1001];
+bool comp(int &a,int &b){
 	if(a<b){
 		return true;
 	}
@@ -12,38 +14,35 @@ bool comp(int a,int b){
 	}
 }
 int main(void){
-	int N,M,L;
-	cin>>N>>M>>L;
-	v.push_back(0);
+	cin>>N>>M>>maxL;
 	for(int i=0;i<N;i++){
 		int tmp;
 		cin>>tmp;
 		v.push_back(tmp);
 	}
-	v.push_back(L);
+	v.push_back(0);
+	v.push_back(maxL);
 	sort(v.begin(),v.end(),comp);
 	int left=1;
-	int right=L;
+	int right=maxL;
 	int mid=0;
 	int result=0;
 	while(left<=right){
-		int val=0;
-		mid = (right+left)/2;
-		//cout<<"left"<<left<<",right"<<right<<",mid"<<mid<<'\n';
+		mid=(left+right)/2;
+		int add=0;
 		for(int i=1;i<v.size();i++){
-			int d = v[i]-v[i-1];
-			val=val+(d/mid);
+			int d= v[i]-v[i-1];
+			add=add+d/mid;
 			if(d%mid==0){
-				val--;
+				add--;
 			}
 		}
-		if(val>M){
+		if(add>M){
 			left=mid+1;
 		}
 		else{
 			right=mid-1;
 			result=mid;
-			//cout<<result<<'\n';
 		}
 	}
 	cout<<result;
