@@ -1,30 +1,22 @@
 #include<iostream>
+#include<vector>
 using namespace std;
-bool primenum[1000001];
-int main(void)
-{
-	int start;
-	int end;
-	cin >> start >> end;
-	for (int i = 2; i <= end; i++)
-	{
-		primenum[i] = true;
-	}
-	for (int i = 2; (i*i) <= 1000000; i++)
-	{
-		if (primenum[i])
-		{
-			for (int j = (i * i); j <= 1000000; j = j + i)
-			{
-				primenum[j] = false;
-			}
+int main(void){
+	int startn, endn;
+	cin>>startn>>endn;
+	vector<bool> isprime(endn+1,true);
+	isprime[1]=false;
+	for(int i=2;i*i<=endn;i++){
+		if(!isprime[i]){
+			continue;
+		}
+		for(int j=i*i;j<=endn;j+=i){
+			isprime[j]=false;
 		}
 	}
-	for (int i = start; i <= end; i++)
-	{
-		if (primenum[i])
-		{
-			cout << i << '\n';
+	for(int i=startn;i<=endn;i++){
+		if(isprime[i]){
+			cout<<i<<'\n';
 		}
 	}
 	return 0;
