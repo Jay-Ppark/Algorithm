@@ -3,27 +3,27 @@
 #include<algorithm>
 using namespace std;
 vector<int> v;
-int N;
-bool findnum(int x){
-	int startn=0;
-	int endn=N-1;
-	while(startn<=endn){
-		int mid=(startn+endn)/2;
-		if(v[mid]<x){
-			startn=mid+1;
+bool bs(int n){
+	int leftindex=0;
+	int rightindex=v.size()-1;
+	while(leftindex<=rightindex){
+		int midindex=(leftindex+rightindex)/2;
+		if(v[midindex]==n){
+			return 1;
 		}
-		else if(v[mid]>x){
-			endn=mid-1;
+		if(v[midindex]<n){
+			leftindex=midindex+1;
 		}
 		else{
-			return true;
+			rightindex=midindex-1;
 		}
 	}
-	return false;
+	return 0;
 }
 int main(void){
 	ios::sync_with_stdio(false);
 	cin.tie(NULL);
+	int N;
 	cin>>N;
 	for(int i=0;i<N;i++){
 		int tmp;
@@ -36,13 +36,7 @@ int main(void){
 	for(int i=0;i<M;i++){
 		int tmp;
 		cin>>tmp;
-		bool answ = findnum(tmp);
-		if(answ){
-			cout<<"1\n";
-		}
-		else{
-			cout<<"0\n";
-		}
+		cout<<bs(tmp)<<'\n';
 	}
 	return 0;
 }
