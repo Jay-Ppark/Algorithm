@@ -1,176 +1,168 @@
 #include<iostream>
 #include<vector>
 using namespace std;
-vector<int> fishmap[4][4];
-vector<int> copyfishmap[4][4];
+vector<int> fish[4][4];
+vector<int> cfish[4][4];
+int dy[8]={0,-1,-1,-1,0,1,1,1};
+int dx[8]={-1,-1,0,1,1,1,0,-1};
+int sy[4]={-1,0,1,0};
+int sx[4]={0,-1,0,1};
+int smell[4][4];
 int sharky,sharkx;
-int dy[9]={0,0,-1,-1,-1,0,1,1,1};
-int dx[9]={0,-1,-1,0,1,1,1,0,-1};
-int smellmap[4][4];
-int dir[3];
-int tmpdir[3];
-int maxcnt= -1;
-int sy[5]={0,-1,0,1,0};
-int sx[5]={0,0,-1,0,1};
-void copyfish(vector<int> copyf[4][4],vector<int> orif[4][4]){
+int tmpsharkd[3];
+int sharkd[3];
+int maxeatfish;
+void showfish(){
     for(int i=0;i<4;i++){
         for(int j=0;j<4;j++){
-            copyf[i][j]=orif[i][j];
+            cout<<fish[i][j].size()<<' ';
         }
+        cout<<'\n';
     }
 }
-int changed(int d){
-    if(d==1){
-        return 8;
-    }
-    else if(d==2){
-        return 1;
-    }
-    else if(d==3){
-        return 2;
-    }
-    else if(d==4){
-        return 3;
-    }
-    else if(d==5){
-        return 4;
-    }
-    else if(d==6){
-        return 5;
-    }
-    else if(d==7){
-        return 6;
-    }
-    else{
-        return 7;
+void copyfish(){
+    for(int i=0;i<4;i++){
+        for(int j=0;j<4;j++){
+            cfish[i][j]=fish[i][j];
+        }
     }
 }
 void movefish(){
     vector<int> tmpfish[4][4];
     for(int i=0;i<4;i++){
         for(int j=0;j<4;j++){
-            for(int t=0;t<fishmap[i][j].size();t++){
-                int y=i;
-                int x=j;
-                int tmpd=fishmap[i][j][t];
-                bool check=false;
-                for(int d=0;d<8;d++){
-                    y=i+dy[tmpd];
-                    x=j+dx[tmpd];
+            for(int k=0;k<fish[i][j].size();k++){
+                int d=fish[i][j][k];
+                bool canmove=false;
+                for(int t=0;t<8;t++){
+                    int y=i+dy[d];
+                    int x=j+dx[d];
                     if(y>=0&&y<4&&x>=0&&x<4){
-                        if(smellmap[y][x]==0){
-                            if(y==sharky&&x==sharkx){
-
-                            }
-                            else{
-                                check=true;
+                        if(y==sharky&&x==sharkx){
+    
+                        }
+                        else{
+                            if(smell[y][x]==0){
+                                tmpfish[y][x].push_back(d);
+                                canmove=true;
                                 break;
                             }
                         }
                     }
-                    tmpd=changed(tmpd);
+                    d--;
+                    if(d==-1){
+                        d=7;
+                    }
                 }
-                if(check){
-                    tmpfish[y][x].push_back(tmpd);
-                }
-                else{
-                    tmpfish[i][j].push_back(fishmap[i][j][t]);
+                if(!canmove){
+                    tmpfish[i][j].push_back(fish[i][j][k]);
                 }
             }
         }
     }
-    copyfish(fishmap,tmpfish);
+    for(int i=0;i<4;i++){
+        for(int j=0;j<4;j++){
+            fish[i][j].clear();
+            fish[i][j]=tmpfish[i][j];
+        }
+    }
 }
-int calfish(){
-    bool visited[4][4]={false,};
-    int tmpy=sharky;
-    int tmpx=sharkx;
+int countfish(){
     int result=0;
+    int ty=sharky;
+    int tx=sharkx;
+    bool visited[4][4]={false,};
     for(int i=0;i<3;i++){
-        tmpy=tmpy+sy[tmpdir[i]];
-        tmpx=tmpx+sx[tmpdir[i]];
-        if(tmpy<0||tmpy>=4||tmpx<0||tmpx>=4){
-            return -1;
+        ty=ty+sy[tmpsharkd[i]];
+        tx=tx+sx[tmpsharkd[i]];
+        if(ty>=0&&ty<4&&tx>=0&&tx<4){
+            if(!visited[ty][tx]){
+                result=result+fish[ty][tx].size();
+                visited[ty][tx]=true;
+            }
         }
         else{
-            if(!visited[tmpy][tmpx]){
-                visited[tmpy][tmpx]=true;
-                result=result+fishmap[tmpy][tmpx].size();
-            }
+            return -1;
         }
     }
     return result;
 }
 void moveshark(int cnt){
     if(cnt==3){
-        int tmpmax=calfish();
-        if(tmpmax>maxcnt){
-            maxcnt=tmpmax;
+        int tmp=countfish();
+        if(tmp==-1){
+            return;
+        }
+        if(tmp>maxeatfish){
+            maxeatfish=tmp;
             for(int i=0;i<3;i++){
-                dir[i]=tmpdir[i];
+                sharkd[i]=tmpsharkd[i];
             }
         }
         return;
     }
-    for(int i=1;i<=4;i++){
-        tmpdir[cnt]=i;
+    for(int i=0;i<4;i++){
+        tmpsharkd[cnt]=i;
         moveshark(cnt+1);
     }
 }
 void eatfish(int t){
-    moveshark(0);
     for(int i=0;i<3;i++){
-        sharky=sharky+sy[dir[i]];
-        sharkx=sharkx+sx[dir[i]];
-        if(!fishmap[sharky][sharkx].empty()){
-            fishmap[sharky][sharkx].clear();
-            smellmap[sharky][sharkx]=t;
+        sharky=sharky+sy[sharkd[i]];
+        sharkx=sharkx+sx[sharkd[i]];
+        if(!fish[sharky][sharkx].empty()){
+            smell[sharky][sharkx]=t;
+            fish[sharky][sharkx].clear();
         }
     }
 }
 void deletesmell(int t){
     for(int i=0;i<4;i++){
         for(int j=0;j<4;j++){
-            if(t-smellmap[i][j]==2){
-                smellmap[i][j]=0;
+            if(t-smell[i][j]==2){
+                smell[i][j]=0;
             }
         }
     }
 }
-void domagic(){
+void pastefish(){
     for(int i=0;i<4;i++){
         for(int j=0;j<4;j++){
-            for(int t=0;t<copyfishmap[i][j].size();t++){
-                fishmap[i][j].push_back(copyfishmap[i][j][t]);
+            for(int k=0;k<cfish[i][j].size();k++){
+                fish[i][j].push_back(cfish[i][j][k]);
             }
+            cfish[i][j].empty();
         }
     }
 }
 int main(void){
-    int fishnum, magicnum;
+    int fishnum,magicnum;
     cin>>fishnum>>magicnum;
     for(int i=0;i<fishnum;i++){
-        int tmpy,tmpx,tmpd;
-        cin>>tmpy>>tmpx>>tmpd;
-        fishmap[tmpy-1][tmpx-1].push_back(tmpd);
+        int ty,tx,td;
+        cin>>ty>>tx>>td;
+        fish[ty-1][tx-1].push_back(td-1);
     }
     cin>>sharky>>sharkx;
     sharky--;
     sharkx--;
-    for(int i=1;i<=magicnum;i++){
-        maxcnt=-1;
-        copyfish(copyfishmap,fishmap);
+    for(int t=1;t<=magicnum;t++){
+        maxeatfish=-1;
+        copyfish();
         movefish();
-        eatfish(i);
-        deletesmell(i);
-        domagic();
+        //showfish();
+        moveshark(0);
+        eatfish(t);
+        //showfish();
+        deletesmell(t);
+        pastefish();
     }
-    int result=0;
+    int answer=0;
     for(int i=0;i<4;i++){
         for(int j=0;j<4;j++){
-            result=result+fishmap[i][j].size();
+            answer=answer+fish[i][j].size();
         }
     }
-    cout<<result;
+    cout<<answer;
     return 0;
 }
