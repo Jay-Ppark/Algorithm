@@ -1,39 +1,35 @@
 #include<iostream>
-#include<algorithm>
 using namespace std;
 int arr[100000];
-int main(void) {
-	int N, S;
-	cin >> N >> S;
-	for (int i = 0; i < N; i++) {
-		cin >> arr[i];
+int main(void){
+	int N,S;
+	cin>>N>>S;
+	for(int i=0;i<N;i++){
+		cin>>arr[i];
 	}
-	int leftn = 0;
-	int rightn = 0;
-	int result = 10000000;
-	int tmpsum = arr[0];
-	//int c = 0;
-	while (leftn <= rightn && rightn < N) {
-		if (tmpsum < S) {
-			rightn++;
-			tmpsum += arr[rightn];
+	int en=0;
+	int cursum=arr[0];
+	int minL=100001;
+	for(int st=0;st<N;st++){
+		while(en<N&&cursum<S){
+			en++;
+			if(en<N){
+				cursum+=arr[en];
+			}
 		}
-		else if (tmpsum == S) {
-			result = min(result, (rightn - leftn + 1));
-			rightn++;
-			tmpsum += arr[rightn];
+		if(en==N){
+			break;
 		}
-		else if (tmpsum > S) {
-			result = min(result, (rightn - leftn + 1));
-			tmpsum -= arr[leftn];
-			leftn++;
+		if(minL>(en-st+1)){
+			minL=en-st+1;
 		}
+		cursum-=arr[st];
 	}
-	if (result != 10000000) {
-		cout << result;
+	if(minL==100001){
+		cout<<0;
 	}
-	else {
-		cout << 0;
+	else{
+		cout<<minL;
 	}
 	return 0;
 }
