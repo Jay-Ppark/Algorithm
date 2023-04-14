@@ -1,50 +1,36 @@
 #include<iostream>
-#include<vector>
-#include<cstdlib>
+#include<set>
 #include<algorithm>
-#include<queue>
+#include<vector>
 using namespace std;
-vector<pair<int, int>> jewelry;
-vector<int> bag;
-priority_queue<int> pq;
-int main(void)
-{
-	cin.tie(NULL);
-	ios::sync_with_stdio(false);
-	long long int result = 0;
-	int jnum;
-	int bnum;
-	cin >> jnum >> bnum;
-	for (int i = 0; i < jnum; i++)
-	{
-		int tmpw;
-		int tmpv;
-		cin >> tmpw >> tmpv;
-		jewelry.push_back({ tmpw,tmpv });
+int main(void){
+	int N,K;
+	cin>>N>>K;
+	vector<pair<int,int>> v;
+	multiset<int> bag;
+	for(int i=0;i<N;i++){
+		int w,p;
+		cin>>w>>p;
+		v.push_back({p,w});
 	}
-	for (int i = 0; i < bnum; i++)
-	{
-		int tmpb;
-		cin >> tmpb;
-		bag.push_back(tmpb);
+	sort(v.begin(),v.end());
+	for(int i=0;i<K;i++){
+		int tmp;
+		cin>>tmp;
+		bag.insert(tmp);
 	}
-	sort(jewelry.begin(), jewelry.end());
-	sort(bag.begin(), bag.end());
-	int tmpindex = 0;
-	for (int i = 0; i < bnum; i++)
-	{
-		while (tmpindex < jnum && jewelry[tmpindex].first <= bag[i])
-		{
-			pq.push(jewelry[tmpindex].second);
-			tmpindex++;
+	long long int ans=0;
+	for(int i=N-1;i>=0;i--){
+		int w,p;
+		p=v[i].first;
+		w=v[i].second;
+		auto it=bag.lower_bound(w);
+		if(it==bag.end()){
+			continue;
 		}
-		if (!pq.empty())
-		{
-			result = result + pq.top();
-			pq.pop();
-		}
+		ans+=p;
+		bag.erase(it);
 	}
-	cout << result;
-	
+	cout<<ans;
 	return 0;
 }
