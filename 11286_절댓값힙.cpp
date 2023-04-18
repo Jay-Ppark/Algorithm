@@ -1,81 +1,49 @@
 #include<iostream>
 #include<queue>
-#include<cstdlib>
+#include<vector>
+#include<functional>
 using namespace std;
-priority_queue<int,vector<int>,greater<int>> plusnum;
-priority_queue<int,vector<int>, less<int>> minusnum;
-int main(void)
-{
-	int arrcnt = 0;
-	int pluscnt = 0;
-	int minuscnt = 0;
-	int testcase;
-	cin >> testcase;
-	for (int i = 0; i < testcase; i++)
-	{
-		int command;
-		cin >> command;
-		if (command == 0)
-		{
-			if (arrcnt == 0)
-			{
-				cout << 0 << '\n';
+priority_queue<int,vector<int>,greater<int>> pq;
+priority_queue<int> mpq;
+int main(void){
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	int N;
+	cin>>N;	
+	for(int i=0;i<N;i++){
+		int tmp;
+		cin>>tmp;
+		if(tmp==0){
+			if(pq.empty()&&mpq.empty()){
+				cout<<0<<'\n';
 			}
-			else
-			{
-				if (pluscnt != 0 && minuscnt != 0)
-				{
-					if (plusnum.top() < abs(minusnum.top()))
-					{
-						cout << plusnum.top() << '\n';
-						plusnum.pop();
-						pluscnt--;
-						arrcnt--;
-					}
-					else if(plusnum.top() > abs(minusnum.top()))
-					{
-						cout << minusnum.top() << '\n';
-						minusnum.pop();
-						minuscnt--;
-						arrcnt--;
-					}
-					else
-					{
-						cout << minusnum.top() << '\n';
-						minusnum.pop();
-						minuscnt--;
-						arrcnt--;
-					}
+			else{
+				if(pq.empty()){
+					cout<<mpq.top()<<'\n';
+					mpq.pop();
 				}
-				else if (pluscnt == 0)
-				{
-					cout << minusnum.top() << '\n';
-					minusnum.pop();
-					minuscnt--;
-					arrcnt--;
+				else if(mpq.empty()){
+					cout<<pq.top()<<'\n';
+					pq.pop();
 				}
-				else if (minuscnt == 0)
-				{
-					cout << plusnum.top() << '\n';
-					plusnum.pop();
-					pluscnt--;
-					arrcnt--;
+				else{
+					if(pq.top()<abs(mpq.top())){
+						cout<<pq.top()<<'\n';
+						pq.pop();
+					}
+					else{
+						cout<<mpq.top()<<'\n';
+						mpq.pop();
+					}
 				}
 			}
 		}
-		else
-		{
-			if (command > 0)
-			{
-				plusnum.push(command);
-				pluscnt++;
-				arrcnt++;
+		else{
+			if(tmp>0){
+				pq.push(tmp);
 			}
-			else
-			{
-				minusnum.push(command);
-				minuscnt++;
-				arrcnt++;
+			else{
+				mpq.push(tmp);
 			}
 		}
 	}

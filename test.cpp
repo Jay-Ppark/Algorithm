@@ -1,25 +1,53 @@
 #include<iostream>
-#include<map>
+#include<queue>
+#include<vector>
+#include<functional>
 using namespace std;
+priority_queue<int,vector<int>,greater<int>> pq;
+priority_queue<int> mpq;
 int main(void){
-    map<string,int> m;
-    m["hi"]=123;
-    m["bird"]=1000;
-    m["gogo"]=165; //{"bird",1000},{"gogo",165},{"hi",123}
-    cout<<m.size()<<'\n'; //3
-    m["hi"]=-7; //{"bird",1000},{"gogo",165},{"hi",-7}
-    if(m.find("hi")!=m.end()){
-        cout<<"yes\n";
-    }
-    else{
-        cout<<"no\n";
-    }
-    m.erase("bird");//{"gogo",165},{"hi",-7}
-    for(auto e:m){
-        cout<<e.first<<' '<<e.second<<'\n'; //gogo 165
-                                            //hi -7
-    }
-    auto it1 = m.find("gogo");
-    cout<<it1->first<<' '<<it1->second<<'\n';// gogo 165
-    return 0;
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+	int N;
+	cin>>N;	
+	for(int i=0;i<N;i++){
+		int tmp;
+		cin>>tmp;
+		if(tmp==0){
+			if(pq.empty()&&mpq.empty()){
+				cout<<0<<'\n';
+			}
+			else{
+				if((!pq.empty())&&(!mpq.empty())){
+					if(pq.top()<abs(mpq.top())){
+						cout<<pq.top()<<'\n';
+						pq.pop();
+					}
+					else{
+						cout<<mpq.top()<<'\n';
+						mpq.pop();
+					}
+				}
+				else{
+					if(pq.empty()){
+						cout<<mpq.top()<<'\n';
+						mpq.pop();
+					}
+					else if(mpq.empty()){
+						cout<<pq.top()<<'\n';
+						pq.pop();
+					}
+				}
+			}
+		}
+		else{
+			if(tmp>0){
+				pq.push(tmp);
+			}
+			else{
+				mpq.push(tmp);
+			}
+		}
+	}
+	return 0;
 }
