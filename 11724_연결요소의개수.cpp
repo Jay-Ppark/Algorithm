@@ -1,28 +1,26 @@
 #include<iostream>
-#include<vector>
-#include<algorithm>
 #include<queue>
+#include<vector>
 using namespace std;
 vector<int> v[1001];
 bool visited[1001];
-int cnt=0;
-void BFS(int y){
+int N,M;
+void BFS(int a){
+    visited[a]=true;
     queue<int> q;
-    q.push(y);
-    visited[y]=true;
+    q.push(a);
     while(!q.empty()){
         int x=q.front();
         q.pop();
         for(int i=0;i<(int)v[x].size();i++){
             if(!visited[v[x][i]]){
-                visited[v[x][i]]=true;
                 q.push(v[x][i]);
+                visited[v[x][i]]=true;
             }
         }
     }
 }
 int main(void){
-    int N,M;
     cin>>N>>M;
     for(int i=0;i<M;i++){
         int s,e;
@@ -30,12 +28,13 @@ int main(void){
         v[s].push_back(e);
         v[e].push_back(s);
     }
+    int ans=0;
     for(int i=1;i<=N;i++){
         if(!visited[i]){
             BFS(i);
-            cnt++;
+            ans++;
         }
     }
-    cout<<cnt;
+    cout<<ans;
     return 0;
 }

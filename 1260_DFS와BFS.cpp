@@ -1,60 +1,57 @@
 #include<iostream>
 #include<vector>
-#include<algorithm>
 #include<queue>
+#include<algorithm>
 using namespace std;
-vector<int> v[1001];
+int N,M,V;
+vector<int> g[1001];
 bool visited[1001];
-int N;
-int startN;
-void DFS(int s){
-	cout<<s<<" ";
-	visited[s]=true;
-	for(int i=0;i<v[s].size();i++){
-		if(!visited[v[s][i]]){
-			DFS(v[s][i]);
+void DFS(int x){
+	visited[x]=true;
+	cout<<x<<' ';
+	for(int i=0;i<(int)g[x].size();i++){
+		if(!visited[g[x][i]]){
+			DFS(g[x][i]);
 		}
 	}
 }
 void init(){
-	for(int i=1;i<=N;i++){
+	for(int i=0;i<=1000;i++){
 		visited[i]=false;
 	}
 }
-void BFS(){
+void BFS(int a){
+	visited[a]=true;
 	queue<int> q;
-	q.push(startN);
-	visited[startN]=true;
+	q.push(a);
 	while(!q.empty()){
-		int topq=q.front();
+		int x=q.front();
 		q.pop();
-		cout<<topq<<" ";
-		for(int i=0;i<v[topq].size();i++){
-			if(!visited[v[topq][i]]){
-				q.push(v[topq][i]);
-				visited[v[topq][i]]=true;
+		cout<<x<<' ';
+		for(int i=0;i<(int)g[x].size();i++){
+			if(!visited[g[x][i]]){
+				q.push(g[x][i]);
+				visited[g[x][i]]=true;
 			}
 		}
 	}
 }
 int main(void){
-	cin>>N;
-	int M;
-	cin>>M>>startN;
+	cin>>N>>M>>V;
 	for(int i=0;i<M;i++){
-		int tmps,tmpe;
-		cin>>tmps>>tmpe;
-		v[tmps].push_back(tmpe);
-		v[tmpe].push_back(tmps);
+		int s,e;
+		cin>>s>>e;
+		g[s].push_back(e);
+		g[e].push_back(s);
 	}
 	for(int i=1;i<=N;i++){
-		if(!v[i].empty()){
-			sort(v[i].begin(),v[i].end());
+		if(!g[i].empty()){
+			sort(g[i].begin(),g[i].end());
 		}
 	}
-	DFS(startN);
+	DFS(V);
 	init();
 	cout<<'\n';
-	BFS();
+	BFS(V);
 	return 0;
 }

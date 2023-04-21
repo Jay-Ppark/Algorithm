@@ -1,53 +1,27 @@
 #include<iostream>
-#include<queue>
-#include<vector>
-#include<functional>
 using namespace std;
-priority_queue<int,vector<int>,greater<int>> pq;
-priority_queue<int> mpq;
+int edge[10][2];
+int deg[10]; // 각 정점의 outdegree
+int* adj[10];
+int idx[10]; // adj[i]에서 새로운 정점을 추가할 때의 위치
 int main(void){
-    ios::sync_with_stdio(false);
-    cin.tie(NULL);
-	int N;
-	cin>>N;	
-	for(int i=0;i<N;i++){
-		int tmp;
-		cin>>tmp;
-		if(tmp==0){
-			if(pq.empty()&&mpq.empty()){
-				cout<<0<<'\n';
-			}
-			else{
-				if((!pq.empty())&&(!mpq.empty())){
-					if(pq.top()<abs(mpq.top())){
-						cout<<pq.top()<<'\n';
-						pq.pop();
-					}
-					else{
-						cout<<mpq.top()<<'\n';
-						mpq.pop();
-					}
-				}
-				else{
-					if(pq.empty()){
-						cout<<mpq.top()<<'\n';
-						mpq.pop();
-					}
-					else if(mpq.empty()){
-						cout<<pq.top()<<'\n';
-						pq.pop();
-					}
-				}
-			}
-		}
-		else{
-			if(tmp>0){
-				pq.push(tmp);
-			}
-			else{
-				mpq.push(tmp);
-			}
-		}
+	int v,e;
+	cin>>v>>e;
+	for(int i=0;i<e;i++){
+		cin>>edge[i][0]>>edge[i][1];
+		deg[edge[i][0]]++;
+		deg[edge[i][1]]++;
+	}
+	for(int i=1;i<=v;i++){
+		adj[i]=new int[deg[i]];
+	}
+	for(int i=0;i<e;i++){
+		int f=edge[i][0];
+		int s=edge[i][1];
+		adj[f][idx[f]]=s;
+		idx[f]++;
+		adj[s][idx[s]]=f;
+		idx[s]++;
 	}
 	return 0;
 }
